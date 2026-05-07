@@ -29,7 +29,7 @@ export default async function MarketplaceLanding() {
         
         {/* Hero Content */}
         <div className="relative z-10 text-center space-y-8 px-4">
-          <h1 className="text-4xl md:text-7xl font-black text-white tracking-tighter uppercase italic drop-shadow-2xl">
+          <h1 className="text-3xl md:text-6xl font-black text-white tracking-tighter uppercase drop-shadow-2xl">
             Browse our latest products
           </h1>
           <Link 
@@ -44,7 +44,7 @@ export default async function MarketplaceLanding() {
       {/* --- FEATURED PRODUCTS --- */}
       <section className="max-w-7xl mx-auto px-6 py-24">
         <div className="flex items-center justify-between mb-16">
-          <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase italic">
+          <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tighter uppercase">
             Featured products
           </h2>
           <Link href="/marketplace/all" className="hidden md:flex items-center gap-2 text-xs font-black uppercase text-emerald-700 hover:gap-4 transition-all tracking-widest">
@@ -57,9 +57,9 @@ export default async function MarketplaceLanding() {
             <Link
               key={product.id}
               href={`/marketplace/${product.id}`}
-              className="group flex flex-col"
+              className="group flex flex-col bg-slate-50"
             >
-              <div className="relative aspect-square w-full overflow-hidden bg-slate-50 border border-slate-100 rounded-2xl p-4">
+              <div className="relative aspect-square w-full overflow-hidden border border-slate-100 rounded-2xl p-4">
                 {product.images?.[0] ? (
                   <Image
                     src={product.images[0]}
@@ -75,11 +75,11 @@ export default async function MarketplaceLanding() {
               </div>
 
               <div className="pt-4 space-y-1">
-                <h3 className="font-bold text-slate-900 text-sm md:text-base line-clamp-1 group-hover:text-emerald-600 transition-colors">
+                <h3 className="font-bold text-slate-900 text-sm md:text-base group-hover:text-emerald-600 transition-colors">
                   {product.name}
                 </h3>
-                <span className="text-lg font-black text-emerald-700">
-                  ₦{Number(product.offer_price || product.price).toLocaleString()}
+                <span className="text-lg font-medium">
+                  ₦{Number(product.offer_price || product.price).toLocaleString()} NGN
                 </span>
               </div>
             </Link>

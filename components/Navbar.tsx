@@ -162,8 +162,8 @@ export default function Navbar() {
               <input 
                 ref={searchInputRef}
                 type="text" 
-                placeholder="Search for components, sensors, or services..."
-                className="w-full text-xl md:text-2xl font-bold outline-none placeholder:text-slate-300 text-slate-900"
+                placeholder="Search for components"
+                className="w-full text-xl md:text-2xl font-normal outline-none  text-slate-900"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -172,11 +172,13 @@ export default function Navbar() {
               <X size={24} />
             </button>
           </div>
+{
+searchQuery != "" &&
+<>
 
-          {/* Results Area */}
           <div className="grid grid-cols-1 md:grid-cols-2 h-[450px]">
             {/* Suggested Categories */}
-            <div className="p-8 border-r border-slate-50 bg-slate-50/30">
+            {/* <div className="p-8 border-r border-slate-50 bg-slate-50/30">
                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Trending Hardware</span>
                <div className="mt-6 space-y-4">
                   {['ESP32 Modules', 'LiFePO4 Cells', 'OLED Displays', 'Custom PCB Printing'].map((item) => (
@@ -189,11 +191,11 @@ export default function Navbar() {
                     </button>
                   ))}
                </div>
-            </div>
+            </div> */}
 
             {/* Live Product Results */}
             <div className="p-8 space-y-6 overflow-y-auto">
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Matching Products</span>
+              <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-slate-400">Matching Products</span>
               {suggestions.length > 0 ? (
                 <div className="space-y-6">
                   {suggestions.map((item) => (
@@ -207,8 +209,8 @@ export default function Navbar() {
                         <Image src={item.images?.[0] || "/placeholder.png"} alt="" fill className="object-contain" />
                       </div>
                       <div>
-                        <h4 className="font-bold text-slate-900 group-hover:text-emerald-600 transition-colors leading-tight">{item.name}</h4>
-                        <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">{item.category}</p>
+                        <h4 className="font-bold text-slate-900 hover:underline transition-colors leading-tight">{item.name}</h4>
+                        {/* <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">{item.category}</p> */}
                       </div>
                     </Link>
                   ))}
@@ -222,13 +224,15 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Footer Action */}
           <button 
             onClick={handleSearchSubmit}
             className="w-full bg-slate-50 p-4 text-center text-sm font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-colors flex items-center justify-center gap-2"
           >
             See all results for "{searchQuery || '...'}" <ArrowRight size={16} />
           </button>
+</>
+
+}      
         </div>
       </div>
     </>

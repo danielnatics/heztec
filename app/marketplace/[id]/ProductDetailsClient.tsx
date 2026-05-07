@@ -30,7 +30,7 @@ export default function ProductDetailsClient({
   return (
     <div className="min-h-screen bg-white font-sans">
       {/* Breadcrumb Navigation */}
-      <div className="bg-slate-50 border-b border-slate-100">
+      {/* <div className="bg-slate-50 border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
           <Link
             href="/marketplace"
@@ -45,7 +45,7 @@ export default function ProductDetailsClient({
             {product.name}
           </span>
         </div>
-      </div>
+      </div> */}
 
       <main className="max-w-7xl mx-auto px-6 py-12 md:py-20">
         <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-12 gap-16 lg:gap-24">
@@ -83,45 +83,99 @@ export default function ProductDetailsClient({
             </div>
 
             {/* Deep Description */}
-            <div className="space-y-8">
-              <h2 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-                <div className="w-2 h-8 bg-emerald-500 rounded-full" />
-                Product Overview
-              </h2>
-              <p className="text-slate-600 text-lg leading-relaxed whitespace-pre-wrap font-medium">
-                {product.description ||
-                  "High-performance engineering component sourced and tested at HezTec Innovation Labs."}
-              </p>
+          </div>
 
-              {/* Technical Specifications Table */}
-              {/* DYNAMIC TECHNICAL SPECIFICATIONS SECTION */}
-              {/* TECHNICAL SPECIFICATION UNORDERED LIST */}
-              <section className="mt-10">
-                <h2 className="text-2xl font-medium text-slate-800 mb-6">
-                  Technical Specification
-                </h2>
+          {/* --- RIGHT: PRICING & ACTIONS --- */}
+          <div className="lg:col-span-5">
+            <div className="lg:sticky lg:top-28 space-y-8">
+              <div className="bg-white   shadow-2xl shadow-slate-200/40 space-y-10">
+                <div className="space-y-4">
+                  <h1 className="text-2xl md:text-5xl font-medium text-slate-900 tracking-tighter leading-[0.95]">
+                    {product.name}
+                  </h1>
+                  <div className="flex items-center gap-4 pt-1">
+                    <span className="text-2xl font-black">
+                      ₦
+                      {Number(
+                        product.offer_price || product.price,
+                      ).toLocaleString()}
+                    </span>
+                    {product.offer_price && (
+                      <span className="text-slate-300 line-through font-bold">
+                        ₦{Number(product.price).toLocaleString()}
+                      </span>
+                    )}
+                  </div>
+                </div>
 
-                <ul className="space-y-3 px-2">
-                  {product.specs &&
-                  Array.isArray(product.specs) &&
-                  product.specs.length > 0 ? (
-                    product.specs.map((sentence: string, i: number) => (
-                      <li
-                        key={i}
-                        className="flex items-start gap-3 text-slate-600 leading-relaxed"
-                      >
-                        <span className="mt-2 w-1.5 h-1.5 rounded-full bg-slate-400 flex-shrink-0" />
-                        <span className="text-lg">{sentence}</span>
-                      </li>
-                    ))
-                  ) : (
-                    <li className="text-slate-400 italic">
-                      No specifications provided.
-                    </li>
-                  )}
-                </ul>
-              </section>
-              {/* <div className="bg-slate-900 rounded-[2.5rem] p-8 md:p-12 text-white overflow-hidden relative group">
+                {/* Quantity Control */}
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">
+                    Select Quantity
+                  </label>
+                  <div className="flex items-center w-full max-w-[180px] border border-emerald-900 rounded-xl p-1.5">
+                    <button
+                      onClick={decrement}
+                      className="w-12 h-12 flex items-center justify-center bg-white border border-slate-100 text-slate-600 hover:text-emerald-600 transition-all"
+                    >
+                      <Minus size={16} />
+                    </button>
+                    <span className="flex-1 text-center font-black text-xl text-slate-900">
+                      {quantity}
+                    </span>
+                    <button
+                      onClick={increment}
+                      className="w-12 h-12 flex items-center justify-center  bg-white border border-slate-100 text-slate-600 hover:text-emerald-600 transition-all"
+                    >
+                      <Plus size={16} />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-4">
+                  <button className="w-full bg-transparent text-black font-black py-6 rounded-[1rem] transition-all flex items-center justify-center gap-3 border border-emerald-900 active:scale-[0.98]">
+                    <ShoppingCart size={22} /> Add to Cart
+                  </button>
+                  <button className="w-full bg-emerald-950 text-white font-black py-6 rounded-[1rem] hover:bg-emerald-900 transition-all flex items-center justify-center gap-3 active:scale-[0.98]">
+                    <ShoppingCart size={22} /> Buy it now
+                  </button>
+                  <div className="space-y-6">
+                    <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                      <div className="w-1 h-8 bg-emerald-500 rounded-full" />
+                      Features
+                    </h2>
+                    <p className="text-slate-600 text-[14px] leading-relaxed whitespace-pre-wrap font-medium">
+                      {product.description ||
+                        "High-performance engineering component sourced and tested at HezTec Innovation Labs."}
+                    </p>
+
+                    {/* Technical Specifications Table */}
+                    {/* DYNAMIC TECHNICAL SPECIFICATIONS SECTION */}
+                    {/* TECHNICAL SPECIFICATION UNORDERED LIST */}
+                    <section className="mt-8">
+                      { product.specs &&
+                        Array.isArray(product.specs) &&
+                        product.specs.length > 0 &&<h2 className="text-2xl font-medium text-slate-800 mb-6">
+                        Technical Specification
+                      </h2>}
+
+                      <ul className="space-y-3 px-2">
+                        {product.specs &&
+                        Array.isArray(product.specs) &&
+                        product.specs.length > 0 && (
+                          product.specs.map((sentence: string, i: number) => (
+                            <li
+                              key={i}
+                              className="flex items-start gap-3 text-slate-600 leading-relaxed"
+                            >
+                              <span className="mt-2 w-1.5 h-1.5 rounded-full bg-slate-400 flex-shrink-0" />
+                              <span className="text-lg">{sentence}</span>
+                            </li>
+                          ))
+                        )}
+                      </ul>
+                    </section>
+                    {/* <div className="bg-slate-900 rounded-[2.5rem] p-8 md:p-12 text-white overflow-hidden relative group">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[100px] -mr-32 -mt-32" />
                 <h3 className="text-xl font-black uppercase tracking-tighter mb-8 flex items-center gap-2">
                   <Zap className="text-emerald-400" size={20} /> Engineering Specs
@@ -145,70 +199,18 @@ export default function ProductDetailsClient({
                   </div>
                 </div>
               </div> */}
-            </div>
-          </div>
-
-          {/* --- RIGHT: PRICING & ACTIONS --- */}
-          <div className="lg:col-span-5">
-            <div className="lg:sticky lg:top-28 space-y-8">
-              <div className="bg-white p-10  shadow-2xl shadow-slate-200/40 space-y-10">
-                <div className="space-y-4">
-                  <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter leading-[0.95]">
-                    {product.name}
-                  </h1>
-                  <div className="flex items-center gap-4 pt-2">
-                    <span className="text-4xl font-black text-emerald-600">
-                      ₦
-                      {Number(
-                        product.offer_price || product.price,
-                      ).toLocaleString()}
-                    </span>
-                    {product.offer_price && (
-                      <span className="text-xl text-slate-300 line-through font-bold">
-                        ₦{Number(product.price).toLocaleString()}
-                      </span>
-                    )}
                   </div>
-                </div>
 
-                {/* Quantity Control */}
-                <div className="space-y-4">
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">
-                    Select Quantity
-                  </label>
-                  <div className="flex items-center w-full max-w-[180px] bg-slate-50 border border-slate-100 rounded-2xl p-1.5">
-                    <button
-                      onClick={decrement}
-                      className="w-12 h-12 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 text-slate-600 hover:text-emerald-600 transition-all"
-                    >
-                      <Minus size={16} />
-                    </button>
-                    <span className="flex-1 text-center font-black text-xl text-slate-900">
-                      {quantity}
-                    </span>
-                    <button
-                      onClick={increment}
-                      className="w-12 h-12 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100 text-slate-600 hover:text-emerald-600 transition-all"
-                    >
-                      <Plus size={16} />
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-4">
-                  <button className="w-full bg-emerald-950 text-white font-black py-6 rounded-[1.5rem] hover:bg-emerald-900 transition-all flex items-center justify-center gap-3 shadow-xl shadow-emerald-950/20 active:scale-[0.98]">
-                    <ShoppingCart size={22} /> Add to Cart
-                  </button>
-                  <Link
+                  {/* <Link
                     href={`https://wa.me/2348130123588?text=Hello HezTec, I want to order ${quantity} units of ${product.name}`}
                     target="_blank"
                     className="w-full bg-white border-2 border-slate-200 text-slate-900 font-black py-6 rounded-[1.5rem] hover:border-emerald-500 hover:text-emerald-700 transition-all flex items-center justify-center gap-3 active:scale-[0.98]"
                   >
                     <MessageCircle size={22} /> Direct Lab Inquiry
-                  </Link>
+                  </Link> */}
                 </div>
 
-                <div className="pt-8 border-t border-slate-100 flex items-center gap-4 justify-center">
+                {/* <div className="pt-8 border-t border-slate-100 flex items-center gap-4 justify-center">
                   <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
                     <ShieldCheck size={16} className="text-emerald-500" />{" "}
                     Professional Grade
@@ -218,7 +220,7 @@ export default function ProductDetailsClient({
                     <Zap size={16} className="text-emerald-500" /> Expert
                     Support
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -229,7 +231,7 @@ export default function ProductDetailsClient({
           <section className="mt-32 md:mt-48 pt-20 border-t border-slate-100">
             <div className="flex items-end justify-between mb-12 px-2">
               <div className="space-y-2">
-                <h2 className="text-4xl font-black text-slate-900 tracking-tighter">
+                <h2 className="text-2xl font-medium text-slate-900 tracking-tighter">
                   You May Also Like
                 </h2>
                 <p className="text-slate-500 font-bold text-sm">

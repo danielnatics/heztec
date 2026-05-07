@@ -71,16 +71,16 @@ export default async function AllProducts({
             <Link
               key={product.id}
               href={`/marketplace/${product.id}`}
-              className="group flex flex-col"
+              className="group flex flex-col bg-[#f5f5f5] border border-slate-100"
             >
               {/* Clean Image Container */}
-              <div className="relative aspect-square w-full overflow-hidden bg-[#f5f5f5] border border-slate-100 rounded-sm">
+              <div className="relative aspect-square w-full overflow-hidden bg-white  border border-slate-100 ">
                 {product.images && product.images[0] ? (
                   <Image
                     src={product.images[0]}
                     alt={product.name}
                     fill
-                    className="object-contain p-8 group-hover:scale-105 transition-transform duration-700"
+                    className="object-contain p-1 group-hover:scale-105 transition-transform duration-700"
                     sizes="(max-width: 768px) 50vw, 25vw"
                   />
                 ) : (
@@ -91,7 +91,7 @@ export default async function AllProducts({
               </div>
 
               {/* Product Metadata */}
-              <div className="pt-4 flex flex-col gap-1.5">
+              <div className="pt-4 flex flex-col gap-1.5 px-2 mb-3">
                 <h3 className="text-slate-800 text-sm md:text-[15px] font-normal leading-tight group-hover:underline decoration-1 underline-offset-4">
                   {product.name}
                 </h3>

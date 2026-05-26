@@ -2,23 +2,22 @@ export const revalidate = 0; // Fetch fresh data for your inventory
 import { createClient } from "@/lib/supabase/server";
 import Image from "next/image";
 import Link from "next/link";
-import FilterBar from "@/components/marketplace/FilterBar";
+import FilterBar from "@/components/shop/FilterBar";
+import ProductCard from "@/components/shop/ProductCard";
 
-export default async function AllProducts({ 
-  searchParams 
-}: { 
-  searchParams: Promise<{ 
-    availability?: string; 
-    sort?: string 
-  }> 
+export default async function AllProducts({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    availability?: string;
+    sort?: string;
+  }>;
 }) {
   const params = await searchParams;
   const supabase = await createClient();
 
   // Initialize query
-  let query = supabase
-    .from("products")
-    .select("*", { count: 'exact' });
+  let query = supabase.from("products").select("*", { count: "exact" });
 
   // 1. AVAILABILITY LOGIC
   if (params.availability === "in_stock") {
@@ -58,7 +57,7 @@ export default async function AllProducts({
       <div className="max-w-7xl mx-auto space-y-6">
         <header>
           <h1 className="text-slate-900 font-bold text-[32px] tracking-tight">
-           All Products
+            All Products
           </h1>
         </header>
 
@@ -68,41 +67,48 @@ export default async function AllProducts({
         {/* Product Grid - Matching image_aed2da.png */}
         <div className="grid min-[600px]:max-[770px]:grid-cols-3 max-[600px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-x-3 md:gap-x-4 gap-y-5 py-3">
           {products?.map((product) => (
-            <Link
-              key={product.id}
-              href={`/marketplace/${product.id}`}
-              className="group flex flex-col bg-[#f5f5f5] border border-slate-100"
-            >
-              {/* Clean Image Container */}
-              <div className="relative aspect-square w-full overflow-hidden bg-white  border border-slate-100 ">
-                {product.images && product.images[0] ? (
-                  <Image
-                    src={product.images[0]}
-                    alt={product.name}
-                    fill
-                    className="object-contain p-1 group-hover transition-transform duration-700"
-                    sizes="(max-width: 768px) 50vw, 25vw"
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center text-slate-300 font-bold text-[10px]">
-                    NO COMPONENT IMAGE
-                  </div>
-                )}
-              </div>
+            <ProductCard key={product.id} product={product} />
 
-              {/* Product Metadata */}
-              <div className="pt-4 flex flex-col gap-1.5 px-2 mb-3">
-                <h3 className="text-slate-800 text-sm md:text-[15px] font-normal leading-tight group-hover:underline decoration-1 underline-offset-4">
-                  {product.name}
-                </h3>
-                <div className="flex items-center gap-1.5 text-slate-900 font-bold">
-                  <span className="text-base md:text-[17px]">
-                    ₦{Number(product.offer_price || product.price).toLocaleString()}
-                  </span>
-                  <span className="text-[11px] font-medium text-slate-400 mt-0.5">NGN</span>
-                </div>
-              </div>
-            </Link>
+            // <Link
+            //   key={product.id}
+            //   href={`/shop/${product.id}`}
+            //   className="group flex flex-col bg-[#f5f5f5] border border-slate-100"
+            // >
+            //   {/* Clean Image Container */}
+            //   <div className="relative aspect-square w-full overflow-hidden bg-white  border border-slate-100 ">
+            //     {product.images && product.images[0] ? (
+            //       <Image
+            //         src={product.images[0]}
+            //         alt={product.name}
+            //         fill
+            //         className="object-contain p-1 group-hover transition-transform duration-700"
+            //         sizes="(max-width: 768px) 50vw, 25vw"
+            //       />
+            //     ) : (
+            //       <div className="flex h-full w-full items-center justify-center text-slate-300 font-bold text-[10px]">
+            //         NO COMPONENT IMAGE
+            //       </div>
+            //     )}
+            //   </div>
+
+            //   {/* Product Metadata */}
+            //   <div className="pt-4 flex flex-col gap-1.5 px-2 mb-3">
+            //     <h3 className="text-slate-800 text-sm md:text-[15px] font-normal leading-tight group-hover:underline decoration-1 underline-offset-4">
+            //       {product.name}
+            //     </h3>
+            //     <div className="flex items-center gap-1.5 text-slate-900 font-bold">
+            //       <span className="text-base md:text-[17px]">
+            //         ₦
+            //         {Number(
+            //           product.offer_price || product.price,
+            //         ).toLocaleString()}
+            //       </span>
+            //       <span className="text-[11px] font-medium text-slate-400 mt-0.5">
+            //         NGN
+            //       </span>
+            //     </div>
+            //   </div>
+            // </Link>
           ))}
         </div>
 
@@ -110,7 +116,8 @@ export default async function AllProducts({
         {(!products || products.length === 0) && (
           <div className="py-32 text-center">
             <p className="text-slate-400 font-medium text-sm italic">
-              Our engineering lab currently has no inventory matching these parameters.
+              Our engineering lab currently has no inventory matching these
+              parameters.
             </p>
           </div>
         )}

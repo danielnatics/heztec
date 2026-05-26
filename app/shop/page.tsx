@@ -2,7 +2,16 @@ export const revalidate = 0;
 import { createClient } from "@/lib/supabase/server";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Package } from "lucide-react";
+import ProductCard from "@/components/shop/ProductCard";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Package,
+  Eye,
+  ShoppingCart,
+  Flame,
+  Star,
+} from "lucide-react";
 
 export default async function MarketplaceLanding() {
   const supabase = await createClient();
@@ -35,19 +44,17 @@ export default async function MarketplaceLanding() {
 
       {/* ── HERO ─────────────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-white border-b border-slate-100">
-
         {/* Faint dot grid */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            backgroundImage: "radial-gradient(circle, rgba(22,163,74,0.07) 1px, transparent 1px)",
+            backgroundImage:
+              "radial-gradient(circle, rgba(22,163,74,0.07) 1px, transparent 1px)",
             backgroundSize: "32px 32px",
           }}
         />
 
-
-
-        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 py-10 md:py-10">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 py-5 md:py-10">
           {/* Eyebrow */}
           {/* <div className="flex items-center gap-3 mb-8">
             <div className="w-7 h-[2px] bg-green-600" />
@@ -61,11 +68,12 @@ export default async function MarketplaceLanding() {
             Browse Our <span className="text-green-600">Products.</span>
           </h1>
 
-          <p className="mt-6 text-base text-slate-500 leading-relaxed max-w-md">
-            Microcontrollers, sensors, modules, and power components — sourced and ready to ship.
+          <p className="text-base text-slate-500 leading-relaxed max-w-md">
+            Microcontrollers, sensors, modules, and power components — sourced
+            and ready to ship.
           </p>
 
-          <div className="flex flex-wrap gap-4 mt-10">
+          {/* <div className="flex flex-wrap gap-4 mt-10">
             <Link
               href="/shop/all"
               className="group inline-flex items-center gap-2.5 px-7 py-3.5 font-bold text-sm text-white rounded-xl transition-all"
@@ -80,7 +88,7 @@ export default async function MarketplaceLanding() {
             >
               Our Services
             </Link>
-          </div>
+          </div> */}
         </div>
       </section>
 
@@ -110,13 +118,13 @@ export default async function MarketplaceLanding() {
 
       {/* ── FEATURED PRODUCTS ────────────────────────────────── */}
       <section className="py-10 md:py-10 bg-white">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-
+        <div className="max-w-7xl mx-auto px-3 lg:px-12">
           {/* Section header */}
           <div className="flex items-end justify-between">
             <div>
               <p className="text-xs font-bold tracking-[0.22em] uppercase text-green-600 mb-3 flex items-center gap-2">
-                <span className="w-5 h-[2px] bg-green-600 inline-block" /> Featured Products
+                <span className="w-5 h-[2px] bg-green-600 inline-block" />{" "}
+                Featured Products
               </p>
               {/* <h2
                 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight"
@@ -129,73 +137,31 @@ export default async function MarketplaceLanding() {
               className="hidden md:inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-green-700 transition-colors group"
             >
               View full catalog
-              <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              <ArrowRight
+                size={14}
+                className="group-hover:translate-x-1 transition-transform"
+              />
             </Link>
           </div>
 
           {/* Product grid */}
           {featuredProducts && featuredProducts.length > 0 ? (
-            <div className="grid min-[600px]:max-[770px]:grid-cols-3 max-[600px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-x-3 md:gap-x-4 gap-y-5 py-10">
+            <div className="grid min-[600px]:max-[770px]:grid-cols-2 max-[600px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-x-3 md:gap-x-4 gap-y-5 py-5">
               {featuredProducts.map((product) => (
-                <Link
-                  key={product.id}
-                  href={`/shop/${product.id}`}
-                  className="product-card group flex flex-col rounded-xl border border-slate-100 overflow-hidden hover:shadow-lg hover:shadow-slate-900/5 hover:border-green-100 transition-all duration-300 bg-white"
-                >
-                  {/* Image */}
-                  <div className="relative aspect-square w-full overflow-hidden bg-slate-50 p-4">
-                    {product.images?.[0] ? (
-                      <Image
-                        src={product.images[0]}
-                        alt={product.name}
-                        fill
-                        className="product-img object-contain"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center">
-                        <Package size={32} className="text-slate-200" />
-                      </div>
-                    )}
-                    {/* Featured badge */}
-                    {/* <div
-                      className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white"
-                      style={{ background: "#16a34a" }}
-                    >
-                      Featured
-                    </div> */}
-                  </div>
-
-                  {/* Info */}
-                  <div className="p-4 flex flex-col gap-1 flex-1">
-                    <h3 className="font-bold text-slate-900 text-sm leading-snug group-hover:text-green-700 transition-colors line-clamp-2">
-                      {product.name}
-                    </h3>
-                    {/* {product.category && (
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-slate-300">
-                        {product.category}
-                      </span>
-                    )} */}
-                    <div className="flex items-center justify-between mt-auto pt-3">
-                      <span className="text-base font-black text-slate-900">
-                        ₦{Number(product.offer_price || product.price).toLocaleString()}
-                      </span>
-                      <div
-                        className="w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all"
-                        style={{ background: "#f0fdf4", color: "#16a34a" }}
-                      >
-                        <ArrowUpRight size={14} />
-                      </div>
-                    </div>
-                  </div>
-                </Link>
+                <ProductCard key={product.id} product={product} />
               ))}
             </div>
           ) : (
             /* Empty state */
             <div className="py-24 text-center border border-dashed border-slate-200 rounded-3xl">
               <Package size={40} className="text-slate-200 mx-auto mb-4" />
-              <p className="text-slate-400 font-medium text-sm">No featured products yet.</p>
-              <Link href="/shop/all" className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-green-700 hover:underline">
+              <p className="text-slate-400 font-medium text-sm">
+                No featured products yet.
+              </p>
+              <Link
+                href="/shop/all"
+                className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-green-700 hover:underline"
+              >
                 Browse all products <ArrowRight size={13} />
               </Link>
             </div>

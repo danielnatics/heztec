@@ -17,28 +17,51 @@ import {
   Home,
   Phone,
   Info,
-  BookOpen
+  BookOpen,
+  LogOut,
+  LogIn
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { useCart } from "@/context/CartContext"; // Connect the global context engine
+
+// Master administrative email address threshold rule
+const ALLOWED_ADMIN_EMAIL = "getheztec@gmail.com";
 
 export default function Navbar() {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false); // Dropdown overlay toggle
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState<any[]>([]);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const profileDropdownRef = useRef<HTMLDivElement>(null);
   const supabase = createClient();
   const router = useRouter();
   const pathname = usePathname();
+  
+  // Pull live item quantity metrics directly from context state
+  const { cartCount } = useCart();
 
-  useEffect(() => { setIsMenuOpen(false); }, [pathname]);
+  useEffect(() => { setIsMenuOpen(false); setIsProfileOpen(false); }, [pathname]);
 
   useEffect(() => {
     document.body.style.overflow = isMenuOpen || isSearchOpen ? "hidden" : "unset";
     return () => { document.body.style.overflow = "unset"; };
   }, [isMenuOpen, isSearchOpen]);
+
+  // Close profile dropdown when clicking outside of it
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(e.target as Node)) {
+        setIsProfileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
 
   useEffect(() => {
     const fetchSuggestions = async () => {
@@ -79,11 +102,27 @@ export default function Navbar() {
     return () => subscription.unsubscribe();
   }, [supabase.auth]);
 
+  // Core Sign Out functionality pipeline
+  const handleSignOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
+      toast.success("Signed out successfully from HezTec session.");
+      setIsProfileOpen(false);
+      setIsMenuOpen(false);
+      router.push("/");
+      router.refresh();
+    } catch (err: any) {
+      toast.error("Sign Out Error: " + err.message);
+    }
+  };
+
   const navLinks = [
-    { name: "Home",     href: "/",        icon: <Home size={17} /> },
+    { name: "Home",     href: "/",         icon: <Home size={17} /> },
     { name: "Shop",     href: "/shop",     icon: <Package size={17} /> },
     { name: "Services", href: "/services", icon: <Cpu size={17} /> },
-    { name: "Blog", href: "/blog", icon: <BookOpen size={17} /> },
+    { name: "Blog",     href: "/blog",     icon: <BookOpen size={17} /> },
     { name: "About",    href: "/about",    icon: <Info size={17} /> },
     { name: "Contact",  href: "/contact",  icon: <Phone size={17} /> },
   ];
@@ -98,6 +137,9 @@ export default function Navbar() {
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
+  // Check if current session belongs to master administrator 
+  const isAdmin = userEmail === ALLOWED_ADMIN_EMAIL;
+
   return (
     <>
       {/* ── NAVBAR ───────────────────────────────────────────── */}
@@ -109,7 +151,7 @@ export default function Navbar() {
             <div className="flex lg:hidden flex-1">
               <button
                 onClick={() => setIsMenuOpen(true)}
-                className="p-2 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors"
+                className="p-2 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
                 aria-label="Open menu"
               >
                 <Menu size={22} />
@@ -147,36 +189,89 @@ export default function Navbar() {
               ))}
             </div>
 
-            {/* UTILITY */}
+            {/* UTILITY BAR SYSTEM */}
             <div className="flex flex-1 justify-end items-center gap-0.5">
               <button
                 onClick={() => setIsSearchOpen(true)}
-                className="p-2.5 rounded-full text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-all"
+                className="p-2.5 rounded-full text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-all cursor-pointer"
               >
-                <Search size={19} strokeWidth={2} />
+                <Search size={19} className="text-green-600 flex-shrink-0" />
               </button>
+              
+              {/* INTERACTIVE SHOPPING BAG ANCHOR */}
               <Link
-                href="/shop/cart"
-                className="p-2.5 rounded-full text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-all relative"
+                href="/cart"
+                className="p-2.5 rounded-full text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-all relative group"
               >
                 <ShoppingBag size={19} strokeWidth={2} />
+                
+                {/* Global Manifest Counter Floating Badge */}
+                {cartCount > 0 && (
+                  <span className="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 bg-green-600 text-white font-mono text-[9px] font-black rounded-full flex items-center justify-center shadow-sm select-none animate-in scale-in duration-200">
+                    {cartCount}
+                  </span>
+                )}
               </Link>
-              {userEmail ? (
-                <Link
-                  href="/admin"
-                  className="ml-1 p-2 rounded-full transition-all"
-                  style={{ background: "rgba(34,197,94,0.1)", color: "#16a34a" }}
+              
+              {/* DESKTOP SECURE SIGN IN / AUTH ACTION CHIP CONTAINER */}
+              <div className="relative" ref={profileDropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setIsProfileOpen(!isProfileOpen)}
+                  className={cn(
+                    "ml-1 p-2.5 rounded-full transition-all flex items-center justify-center cursor-pointer select-none",
+                    userEmail ? "bg-green-50 text-green-700" : "text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+                  )}
                 >
-                  <LayoutDashboard size={17} />
-                </Link>
-              ) : (
-                <Link
-                  href="/login"
-                  className="ml-1 p-2.5 rounded-full text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-all"
-                >
-                  <User size={19} />
-                </Link>
-              )}
+                  <User size={19} strokeWidth={userEmail ? 2.5 : 2} />
+                </button>
+
+                {/* DESKTOP USER OPTIONS DROPDOWN OVERLAY */}
+                {isProfileOpen && (
+                  <div className="absolute right-0 mt-2 w-56 bg-white border border-slate-100 rounded-2xl shadow-xl py-2 z-[110] animate-in fade-in slide-in-from-top-2 duration-200">
+                    {userEmail ? (
+                      /* Authenticated User Menu */
+                      <>
+                        <div className="px-4 py-2.5 border-b border-slate-50">
+                          <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">Account Session</p>
+                          <p className="text-xs font-bold text-slate-700 truncate mt-0.5">{userEmail}</p>
+                        </div>
+                        
+                        {/* CONDITIONAL DASHBOARD OPTION: Verified Admin Only */}
+                        {isAdmin && (
+                          <Link
+                            href="/admin"
+                            className="flex items-center gap-2.5 px-4 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                          >
+                            <LayoutDashboard size={16} className="text-slate-400" /> Dashboard
+                          </Link>
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={handleSignOut}
+                          className="w-full flex items-center gap-2.5 px-4 py-3 text-sm font-semibold text-red-600 hover:bg-red-50 transition-colors text-left border-t border-slate-50 cursor-pointer"
+                        >
+                          <LogOut size={16} /> Close Session (Log Out)
+                        </button>
+                      </>
+                    ) : (
+                      /* Unauthenticated Anonymous Guest Dropdown Menu -> Routes to Unified Form page */
+                      <>
+                        <div className="px-4 py-2 border-b border-slate-50">
+                          <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">Welcome</p>
+                        </div>
+                        <Link
+                          href="/login"
+                          className="flex items-center gap-2.5 px-4 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-green-700 transition-colors"
+                        >
+                          <LogIn size={16} className="text-slate-400" /> Sign In / Register
+                        </Link>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -217,7 +312,7 @@ export default function Navbar() {
           </Link>
           <button
             onClick={() => setIsMenuOpen(false)}
-            className="p-1.5 rounded-full bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors"
+            className="p-1.5 rounded-full bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
           >
             <X size={16} />
           </button>
@@ -248,7 +343,7 @@ export default function Navbar() {
           ))}
 
           {/* Services sub-links */}
-          <div className="pt-5 pb-1">
+          {/* <div className="pt-5 pb-1">
             <p className="px-4 text-[10px] font-black uppercase tracking-[0.18em] text-slate-300 mb-2">
               Services
             </p>
@@ -263,10 +358,10 @@ export default function Navbar() {
                 {s.name}
               </Link>
             ))}
-          </div>
+          </div> */}
         </div>
 
-        {/* Footer */}
+        {/* Footer Area - Adaptive Authentication Options */}
         <div className="px-5 py-4 border-t border-slate-100 space-y-2.5">
           <Link
             href="/contact"
@@ -278,21 +373,35 @@ export default function Navbar() {
           </Link>
 
           {userEmail ? (
-            <Link
-              href="/admin"
-              onClick={() => setIsMenuOpen(false)}
-              className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm border transition-all"
-              style={{ borderColor: "#bbf7d0", color: "#16a34a", background: "#f0fdf4" }}
-            >
-              <LayoutDashboard size={15} /> Dashboard
-            </Link>
+            <>
+              {/* CONDITIONAL SIDEBAR DASHBOARD CHIP: Verified Admin Only */}
+              {isAdmin && (
+                <Link
+                  href="/admin"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm border transition-all"
+                  style={{ borderColor: "#bbf7d0", color: "#16a34a", background: "#f0fdf4" }}
+                >
+                  <LayoutDashboard size={15} /> Dashboard
+                </Link>
+              )}
+              
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm border border-red-200 text-red-600 bg-red-50/50 hover:bg-red-50 transition-all cursor-pointer"
+              >
+                <LogOut size={15} /> Log Out
+              </button>
+            </>
           ) : (
+            /* Unified Sign In entry button target for Mobile layout screens */
             <Link
               href="/login"
               onClick={() => setIsMenuOpen(false)}
               className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all"
             >
-              <User size={15} /> Sign In
+              <LogIn size={15} /> Sign In / Register
             </Link>
           )}
 
@@ -335,7 +444,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => { setIsSearchOpen(false); setSearchQuery(""); }}
-              className="p-1.5 rounded-full bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
+              className="p-1.5 rounded-full bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
             >
               <X size={15} />
             </button>
@@ -374,7 +483,7 @@ export default function Navbar() {
                   ))}
                   <button
                     onClick={handleSearchSubmit}
-                    className="w-full flex items-center justify-center gap-2 py-4 text-sm font-bold text-green-700 hover:bg-green-50 transition-colors"
+                    className="w-full flex items-center justify-center gap-2 py-4 text-sm font-bold text-green-700 hover:bg-green-50 transition-colors cursor-pointer"
                   >
                     See all results for "{searchQuery}" <ArrowRight size={14} />
                   </button>
@@ -390,7 +499,7 @@ export default function Navbar() {
             </div>
           )}
 
-          {/* Popular tags */}
+          {/* Popular searches */}
           {searchQuery.length === 0 && (
             <div className="px-5 py-6">
               <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-300 mb-3">
@@ -401,7 +510,7 @@ export default function Navbar() {
                   <button
                     key={t}
                     onClick={() => setSearchQuery(t)}
-                    className="px-3.5 py-1.5 rounded-full text-sm font-medium text-slate-600 border border-slate-200 hover:border-green-300 hover:text-green-700 hover:bg-green-50 transition-all"
+                    className="px-3.5 py-1.5 rounded-full text-sm font-medium text-slate-600 border border-slate-200 hover:border-green-300 hover:text-green-700 hover:bg-green-50 transition-all cursor-pointer"
                   >
                     {t}
                   </button>

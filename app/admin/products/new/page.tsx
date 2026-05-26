@@ -237,6 +237,8 @@ export default function AddProduct() {
                   <option value="power">Power & BMS</option>
                   <option value="display">Display</option>
                   <option value="pcb">Custom PCB</option>
+                  <option value="module">Module</option>
+                  <option value="kit">Kit</option>
                 </select>
               </div>
               <div className="space-y-2">

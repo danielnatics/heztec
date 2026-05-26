@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import "./globals.css";
+import { CartProvider } from "@/context/CartContext";
 import { Toaster } from "sonner";
-
 
 export const metadata: Metadata = {
   title: "HezTec",
@@ -16,13 +16,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`h-full antialiased`}
-    >
+    <html lang="en" className={`h-full antialiased`}>
       <body className="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50">
-        <Navbar />
-        <main>{children}</main>
+        <CartProvider>
+          <Navbar />
+          <main>{children}</main>
+        </CartProvider>
         <Toaster position="bottom-right" richColors />
       </body>
     </html>

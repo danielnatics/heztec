@@ -17,8 +17,8 @@ export default async function AdminDashboard() {
   
   const stats = [
     { label: "Total Products", value: productCount || 0, icon: <Package />, color: "text-blue-600", bg: "bg-blue-50" },
-    { label: "Total Orders", value: "124", icon: <ShoppingCart />, color: "text-emerald-600", bg: "bg-emerald-50" },
-    { label: "Revenue", value: "₦1.2M", icon: <TrendingUp />, color: "text-purple-600", bg: "bg-purple-50" },
+    { label: "Total Orders", value: "0", icon: <ShoppingCart />, color: "text-emerald-600", bg: "bg-emerald-50" },
+    { label: "Revenue", value: "₦0", icon: <TrendingUp />, color: "text-purple-600", bg: "bg-purple-50" },
     { label: "Low Stock", value: "3", icon: <AlertTriangle />, color: "text-amber-600", bg: "bg-amber-50" },
   ];
 

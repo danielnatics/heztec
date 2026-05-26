@@ -1,4 +1,4 @@
-export const revalidate = 0; // Fetch fresh data for your inventory
+export const revalidate = 0; // Force Next.js to bypass caching and run this function on every fresh page refresh
 import { createClient } from "@/lib/supabase/server";
 import Image from "next/image";
 import Link from "next/link";
@@ -16,19 +16,20 @@ export default async function AllProducts({
   const params = await searchParams;
   const supabase = await createClient();
 
-  // Initialize query
+  // Initialize query database pointer connection
   let query = supabase.from("products").select("*", { count: "exact" });
 
-  // 1. AVAILABILITY LOGIC
+  // 1. AVAILABILITY FILTERING LOGIC
   if (params.availability === "in_stock") {
     query = query.gt("stock_quantity", 0);
   } else if (params.availability === "out_of_stock") {
     query = query.eq("stock_quantity", 0);
   }
 
-  // 2. DEFAULT & DYNAMIC SORTING
-  // Default to 'newest' if no sort is in the URL
-  const activeSort = params.sort || "newest";
+  // 2. CONDITIONAL DATABASE SORT SCHEMES
+  // Fallback to 'random' if no explicit sorting selection is present in the URL path
+  const activeSort = params.sort || "random"; 
+  let shouldShuffleInServer = false;
 
   switch (activeSort) {
     case "price_low":
@@ -44,83 +45,57 @@ export default async function AllProducts({
       query = query.order("name", { ascending: false });
       break;
     case "newest":
-    default:
       query = query.order("created_at", { ascending: false });
+      break;
+    case "random":
+    default:
+      // Flag the query execution context to apply the in-memory array shuffle layer below
+      shouldShuffleInServer = true;
+      break;
   }
 
-  const { data: products, count, error } = await query;
+  const { data: rawProducts, count, error } = await query;
 
   if (error) console.error("HezTec DB Error:", error);
+
+  // 3. APPLY IN-MEMORY RANDOM SHUFFLE IF REQUIRED
+  // Scrambles the response matrix instantly using Math.random on every request call
+  const products = rawProducts
+    ? shouldShuffleInServer
+      ? [...rawProducts].sort(() => Math.random() - 0.5)
+      : rawProducts
+    : [];
 
   return (
     <div className="min-h-screen bg-white p-4 md:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
+        
         <header>
           <h1 className="text-slate-900 font-bold text-[32px] tracking-tight">
             All Products
           </h1>
         </header>
 
-        {/* Dynamic Filter UI */}
+        {/* Dynamic Filter UI Toolbar wrapper element */}
         {/* <FilterBar totalProducts={count || 0} /> */}
 
-        {/* Product Grid - Matching image_aed2da.png */}
-        <div className="grid min-[600px]:max-[770px]:grid-cols-3 max-[600px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-x-3 md:gap-x-4 gap-y-5 py-3">
-          {products?.map((product) => (
-            <ProductCard key={product.id} product={product} />
-
-            // <Link
-            //   key={product.id}
-            //   href={`/shop/${product.id}`}
-            //   className="group flex flex-col bg-[#f5f5f5] border border-slate-100"
-            // >
-            //   {/* Clean Image Container */}
-            //   <div className="relative aspect-square w-full overflow-hidden bg-white  border border-slate-100 ">
-            //     {product.images && product.images[0] ? (
-            //       <Image
-            //         src={product.images[0]}
-            //         alt={product.name}
-            //         fill
-            //         className="object-contain p-1 group-hover transition-transform duration-700"
-            //         sizes="(max-width: 768px) 50vw, 25vw"
-            //       />
-            //     ) : (
-            //       <div className="flex h-full w-full items-center justify-center text-slate-300 font-bold text-[10px]">
-            //         NO COMPONENT IMAGE
-            //       </div>
-            //     )}
-            //   </div>
-
-            //   {/* Product Metadata */}
-            //   <div className="pt-4 flex flex-col gap-1.5 px-2 mb-3">
-            //     <h3 className="text-slate-800 text-sm md:text-[15px] font-normal leading-tight group-hover:underline decoration-1 underline-offset-4">
-            //       {product.name}
-            //     </h3>
-            //     <div className="flex items-center gap-1.5 text-slate-900 font-bold">
-            //       <span className="text-base md:text-[17px]">
-            //         ₦
-            //         {Number(
-            //           product.offer_price || product.price,
-            //         ).toLocaleString()}
-            //       </span>
-            //       <span className="text-[11px] font-medium text-slate-400 mt-0.5">
-            //         NGN
-            //       </span>
-            //     </div>
-            //   </div>
-            // </Link>
-          ))}
-        </div>
-
-        {/* Empty State */}
-        {(!products || products.length === 0) && (
-          <div className="py-32 text-center">
+        {/* Product Grid Layout frame */}
+        {products && products.length > 0 ? (
+          <div className="grid min-[600px]:max-[770px]:grid-cols-3 max-[600px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-x-3 md:gap-x-4 gap-y-5 py-3">
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        ) : (
+          /* Empty State Feedback Screen component view */
+          <div className="py-32 text-center border border-dashed border-slate-100 rounded-3xl">
             <p className="text-slate-400 font-medium text-sm italic">
               Our engineering lab currently has no inventory matching these
               parameters.
             </p>
           </div>
         )}
+        
       </div>
     </div>
   );

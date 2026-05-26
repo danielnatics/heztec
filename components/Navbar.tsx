@@ -5,18 +5,20 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import {
-  LogOut,
   User,
   LayoutDashboard,
   ShoppingBag,
   Menu,
   X,
   Search,
-  ChevronRight,
-  ArrowUpRight,
   ArrowRight,
+  Cpu,
+  Package,
+  Home,
+  Phone,
+  Info,
+  BookOpen
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export default function Navbar() {
@@ -25,46 +27,41 @@ export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState<any[]>([]);
-  
+
   const searchInputRef = useRef<HTMLInputElement>(null);
   const supabase = createClient();
   const router = useRouter();
   const pathname = usePathname();
-  const isMarketplace = pathname.startsWith("/marketplace");
 
-  // Handle Live Search Suggestions
+  useEffect(() => { setIsMenuOpen(false); }, [pathname]);
+
+  useEffect(() => {
+    document.body.style.overflow = isMenuOpen || isSearchOpen ? "hidden" : "unset";
+    return () => { document.body.style.overflow = "unset"; };
+  }, [isMenuOpen, isSearchOpen]);
+
   useEffect(() => {
     const fetchSuggestions = async () => {
-      if (searchQuery.length < 2) {
-        setSuggestions([]);
-        return;
-      }
+      if (searchQuery.length < 2) { setSuggestions([]); return; }
       const { data } = await supabase
         .from("products")
         .select("id, name, images, category")
         .ilike("name", `%${searchQuery}%`)
-        .limit(4);
+        .limit(5);
       setSuggestions(data || []);
     };
-
     const debounce = setTimeout(fetchSuggestions, 300);
     return () => clearTimeout(debounce);
   }, [searchQuery, supabase]);
 
-  // Focus input when overlay opens
   useEffect(() => {
-    if (isSearchOpen) {
-      document.body.style.overflow = "hidden"; // Prevent scrolling
-      setTimeout(() => searchInputRef.current?.focus(), 100);
-    } else {
-      document.body.style.overflow = "unset";
-    }
+    if (isSearchOpen) setTimeout(() => searchInputRef.current?.focus(), 100);
   }, [isSearchOpen]);
 
   const handleSearchSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
     if (searchQuery.trim()) {
-      router.push(`/marketplace?search=${encodeURIComponent(searchQuery)}`);
+      router.push(`/shop?search=${encodeURIComponent(searchQuery)}`);
       setIsSearchOpen(false);
       setSearchQuery("");
     }
@@ -76,163 +73,342 @@ export default function Navbar() {
       setUserEmail(user?.email || null);
     };
     getUser();
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
       setUserEmail(session?.user?.email || null);
     });
     return () => subscription.unsubscribe();
   }, [supabase.auth]);
 
   const navLinks = [
-    { name: "Marketplace", href: "/marketplace" },
-    { name: "Services", href: "/services" },
-    { name: "Technical Help", href: "/support" },
+    { name: "Home",     href: "/",        icon: <Home size={17} /> },
+    { name: "Shop",     href: "/shop",     icon: <Package size={17} /> },
+    { name: "Services", href: "/services", icon: <Cpu size={17} /> },
+    { name: "Blog", href: "/blog", icon: <BookOpen size={17} /> },
+    { name: "About",    href: "/about",    icon: <Info size={17} /> },
+    { name: "Contact",  href: "/contact",  icon: <Phone size={17} /> },
   ];
+
+  const serviceLinks = [
+    { name: "PCB Design",       href: "/services" },
+    { name: "Embedded & IoT",   href: "/services" },
+    { name: "3D Printing",      href: "/services" },
+    { name: "Component Sales",  href: "/shop"     },
+  ];
+
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
     <>
-      <nav className="border-b bg-white/80 backdrop-blur-xl border-slate-200/60 sticky top-0 z-[100]">
+      {/* ── NAVBAR ───────────────────────────────────────────── */}
+      <nav className="sticky top-0 z-[100] bg-white/90 backdrop-blur-xl border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16 md:h-20">
-            {/* MOBILE HAMBURGER */}
-            <div className="flex md:hidden flex-1">
-              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2">
-                {isMenuOpen ? <X size={26} /> : <Menu size={26} />}
+          <div className="flex items-center justify-between h-16 md:h-[72px]">
+
+            {/* HAMBURGER */}
+            <div className="flex lg:hidden flex-1">
+              <button
+                onClick={() => setIsMenuOpen(true)}
+                className="p-2 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors"
+                aria-label="Open menu"
+              >
+                <Menu size={22} />
               </button>
             </div>
 
             {/* LOGO */}
             <div className="flex-none md:flex-1 flex justify-center md:justify-start">
-              <Link href="/" className="flex items-center gap-2.5">
-                <Image src="/logo_heztec.png" alt="HezTec" width={38} height={34} />
-                <div className="flex flex-col">
-                  <span className="text-lg md:text-xl font-black text-slate-900 uppercase tracking-tighter">HezTec</span>
-                  <span className="text-[8px] font-black text-emerald-600 uppercase tracking-[0.3em]">Innovation</span>
+              <Link href="/" className="flex items-center">
+                <Image src="/logo.png" alt="HezTec" width={50} height={50} className="object-contain" />
+                <div className="flex flex-col leading-none">
+                  <span className="text-[17px] font-black tracking-tight text-slate-900">HezTec</span>
+                  <span className="text-[9px] font-bold tracking-[0.18em] uppercase" style={{ color: "#16a34a" }}>
+                    Engineered Excellence
+                  </span>
                 </div>
               </Link>
             </div>
 
-            {/* DESKTOP NAV */}
-            <div className="hidden md:flex items-center space-x-1 text-sm font-bold">
-              {navLinks.map((link) => (
-                <Link key={link.name} href={link.href} className={cn("px-5 py-2.5 rounded-full transition-all", pathname === link.href ? "bg-emerald-950 text-white" : "text-slate-600 hover:text-emerald-600")}>
+            {/* DESKTOP LINKS */}
+            <div className="hidden lg:flex items-center gap-0.5 text-sm font-semibold">
+              {navLinks.filter(l => l.name !== "Home").map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className={cn(
+                    "px-4 py-2 rounded-full transition-all",
+                    isActive(link.href)
+                      ? "bg-green-50 text-green-700"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                  )}
+                >
                   {link.name}
                 </Link>
               ))}
             </div>
 
             {/* UTILITY */}
-            <div className="flex flex-1 justify-end items-center gap-1">
-              <button 
+            <div className="flex flex-1 justify-end items-center gap-0.5">
+              <button
                 onClick={() => setIsSearchOpen(true)}
-                className="p-2.5 text-slate-900 hover:bg-slate-100 rounded-full transition-all"
+                className="p-2.5 rounded-full text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-all"
               >
-                <Search size={22} strokeWidth={2.5} />
+                <Search size={19} strokeWidth={2} />
               </button>
-              
-              <Link href="/marketplace/cart" className="p-2.5 text-slate-900 hover:bg-slate-100 rounded-full relative">
-                <ShoppingBag size={22} strokeWidth={2.5} />
-                <span className="absolute top-2 right-2 w-2 h-2 bg-emerald-500 rounded-full ring-2 ring-white"></span>
+              <Link
+                href="/shop/cart"
+                className="p-2.5 rounded-full text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-all relative"
+              >
+                <ShoppingBag size={19} strokeWidth={2} />
               </Link>
-
               {userEmail ? (
-                <Link href="/admin" className="ml-2 bg-slate-900 p-2 rounded-full text-emerald-400">
-                  <LayoutDashboard size={18} />
+                <Link
+                  href="/admin"
+                  className="ml-1 p-2 rounded-full transition-all"
+                  style={{ background: "rgba(34,197,94,0.1)", color: "#16a34a" }}
+                >
+                  <LayoutDashboard size={17} />
                 </Link>
               ) : (
-                <Link href="/login" className="p-2.5 text-slate-900"><User size={22} /></Link>
+                <Link
+                  href="/login"
+                  className="ml-1 p-2.5 rounded-full text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-all"
+                >
+                  <User size={19} />
+                </Link>
               )}
             </div>
           </div>
         </div>
       </nav>
 
-      {/* --- SEARCH OVERLAY (The Image Requirement) --- */}
-      <div className={cn(
-        "fixed inset-0 z-[200] bg-slate-900/40 backdrop-blur-sm transition-all duration-300",
-        isSearchOpen ? "opacity-100 visible" : "opacity-0 invisible"
-      )}>
-        <div className={cn(
-          "bg-white w-full max-w-4xl mx-auto mt-0 md:mt-10 md:rounded-3xl shadow-2xl overflow-hidden transition-all duration-500 transform",
-          isSearchOpen ? "translate-y-0" : "-translate-y-10"
-        )}>
-          {/* Search Input Area */}
-          <div className="p-6 border-b flex items-center gap-4">
-            <Search className="text-slate-400" size={24} />
-            <form onSubmit={handleSearchSubmit} className="flex-1">
-              <input 
-                ref={searchInputRef}
-                type="text" 
-                placeholder="Search for components"
-                className="w-full text-xl md:text-2xl font-normal outline-none  text-slate-900"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </form>
-            <button onClick={() => setIsSearchOpen(false)} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
-              <X size={24} />
-            </button>
+      {/* ── SIDEBAR BACKDROP ─────────────────────────────────── */}
+      <div
+        onClick={() => setIsMenuOpen(false)}
+        className="fixed inset-0 z-[150] transition-all duration-300"
+        style={{
+          background: "rgba(0,0,0,0.35)",
+          backdropFilter: "blur(3px)",
+          opacity: isMenuOpen ? 1 : 0,
+          pointerEvents: isMenuOpen ? "auto" : "none",
+        }}
+      />
+
+      {/* ── SIDEBAR DRAWER ───────────────────────────────────── */}
+      <aside
+        className="fixed top-0 left-0 h-full z-[160] flex flex-col transition-transform duration-300 ease-in-out bg-white"
+        style={{
+          width: 288,
+          borderRight: "1px solid #f1f5f9",
+          boxShadow: "4px 0 40px rgba(0,0,0,0.08)",
+          transform: isMenuOpen ? "translateX(0)" : "translateX(-100%)",
+        }}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+          <Link href="/" className="flex items-center gap-2.5" onClick={() => setIsMenuOpen(false)}>
+            <Image src="/logo.png" alt="HezTec" width={34} height={34} className="object-contain" />
+            <div className="leading-none">
+              <p className="font-black text-[15px] tracking-tight text-slate-900">HezTec</p>
+              <p className="text-[9px] font-bold tracking-[0.18em] uppercase mt-0.5" style={{ color: "#16a34a" }}>
+                Engineered Excellence
+              </p>
+            </div>
+          </Link>
+          <button
+            onClick={() => setIsMenuOpen(false)}
+            className="p-1.5 rounded-full bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors"
+          >
+            <X size={16} />
+          </button>
+        </div>
+
+        {/* Nav links */}
+        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
+          {navLinks.map((link) => (
+            <Link
+              key={link.name}
+              href={link.href}
+              onClick={() => setIsMenuOpen(false)}
+              className={cn(
+                "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all",
+                isActive(link.href)
+                  ? "bg-green-50 text-green-700"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+              )}
+              style={{
+                borderLeft: isActive(link.href) ? "2px solid #16a34a" : "2px solid transparent",
+              }}
+            >
+              <span className={isActive(link.href) ? "text-green-600" : "text-slate-400"}>
+                {link.icon}
+              </span>
+              {link.name}
+            </Link>
+          ))}
+
+          {/* Services sub-links */}
+          <div className="pt-5 pb-1">
+            <p className="px-4 text-[10px] font-black uppercase tracking-[0.18em] text-slate-300 mb-2">
+              Services
+            </p>
+            {serviceLinks.map((s) => (
+              <Link
+                key={s.name}
+                href={s.href}
+                onClick={() => setIsMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-50 transition-all"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0" />
+                {s.name}
+              </Link>
+            ))}
           </div>
-{
-searchQuery != "" &&
-<>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 h-[450px]">
-            {/* Suggested Categories */}
-            {/* <div className="p-8 border-r border-slate-50 bg-slate-50/30">
-               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Trending Hardware</span>
-               <div className="mt-6 space-y-4">
-                  {['ESP32 Modules', 'LiFePO4 Cells', 'OLED Displays', 'Custom PCB Printing'].map((item) => (
-                    <button 
-                      key={item}
-                      onClick={() => { setSearchQuery(item); handleSearchSubmit(); }}
-                      className="block text-lg font-bold text-slate-800 hover:text-emerald-600 transition-colors"
-                    >
-                      {item}
-                    </button>
-                  ))}
-               </div>
-            </div> */}
+        {/* Footer */}
+        <div className="px-5 py-4 border-t border-slate-100 space-y-2.5">
+          <Link
+            href="/contact"
+            onClick={() => setIsMenuOpen(false)}
+            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-bold text-sm transition-all text-white"
+            style={{ background: "#16a34a" }}
+          >
+            Start a Project <ArrowRight size={15} />
+          </Link>
 
-            {/* Live Product Results */}
-            <div className="p-8 space-y-6 overflow-y-auto">
-              <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-slate-400">Matching Products</span>
+          {userEmail ? (
+            <Link
+              href="/admin"
+              onClick={() => setIsMenuOpen(false)}
+              className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm border transition-all"
+              style={{ borderColor: "#bbf7d0", color: "#16a34a", background: "#f0fdf4" }}
+            >
+              <LayoutDashboard size={15} /> Dashboard
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              onClick={() => setIsMenuOpen(false)}
+              className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all"
+            >
+              <User size={15} /> Sign In
+            </Link>
+          )}
+
+          <p className="text-center text-[10px] text-slate-300 pt-1">© 2026 HezTec Innovation</p>
+        </div>
+      </aside>
+
+      {/* ── SEARCH OVERLAY ───────────────────────────────────── */}
+      <div
+        className="fixed inset-0 z-[200] transition-all duration-300 p-4"
+        style={{
+          background: "rgba(15,23,42,0.5)",
+          backdropFilter: "blur(6px)",
+          opacity: isSearchOpen ? 1 : 0,
+          pointerEvents: isSearchOpen ? "auto" : "none",
+        }}
+      >
+        <div
+          className="w-full max-w-2xl mx-auto mt-16 bg-white overflow-hidden transition-all duration-300 shadow-2xl"
+          style={{
+            borderRadius: 20,
+            border: "1px solid #f1f5f9",
+            transform: isSearchOpen ? "translateY(0)" : "translateY(-16px)",
+          }}
+        >
+          {/* Input row */}
+          <form
+            onSubmit={handleSearchSubmit}
+            className="flex items-center gap-3 px-5 py-4 border-b border-slate-100"
+          >
+            <Search size={19} className="text-green-600 flex-shrink-0" />
+            <input
+              ref={searchInputRef}
+              type="text"
+              placeholder="Search for components..."
+              className="flex-1 bg-transparent text-[17px] outline-none font-medium text-slate-900 placeholder:text-slate-300"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button
+              type="button"
+              onClick={() => { setIsSearchOpen(false); setSearchQuery(""); }}
+              className="p-1.5 rounded-full bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
+            >
+              <X size={15} />
+            </button>
+          </form>
+
+          {/* Results */}
+          {searchQuery.length >= 2 && (
+            <div className="max-h-[380px] overflow-y-auto">
               {suggestions.length > 0 ? (
-                <div className="space-y-6">
+                <>
+                  <div className="px-5 pt-4 pb-1">
+                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-300">
+                      Matching Products
+                    </p>
+                  </div>
                   {suggestions.map((item) => (
-                    <Link 
-                      key={item.id} 
-                      href={`/marketplace/${item.id}`}
-                      onClick={() => setIsSearchOpen(false)}
-                      className="flex items-center gap-4 group"
+                    <Link
+                      key={item.id}
+                      href={`/shop/${item.id}`}
+                      onClick={() => { setIsSearchOpen(false); setSearchQuery(""); }}
+                      className="flex items-center gap-4 px-5 py-3.5 hover:bg-slate-50 transition-colors border-b border-slate-50"
                     >
-                      <div className="w-16 h-16 bg-slate-100 rounded-xl flex-shrink-0 relative overflow-hidden p-2">
-                        <Image src={item.images?.[0] || "/placeholder.png"} alt="" fill className="object-contain" />
+                      <div className="w-11 h-11 flex-shrink-0 rounded-xl overflow-hidden relative bg-slate-100">
+                        <Image
+                          src={item.images?.[0] || "/placeholder.png"}
+                          alt=""
+                          fill
+                          className="object-contain p-1.5"
+                        />
                       </div>
                       <div>
-                        <h4 className="font-bold text-slate-900 hover:underline transition-colors leading-tight">{item.name}</h4>
-                        {/* <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">{item.category}</p> */}
+                        <p className="font-semibold text-sm text-slate-900">{item.name}</p>
+                        <p className="text-xs text-slate-400 mt-0.5">{item.category}</p>
                       </div>
                     </Link>
                   ))}
-                </div>
+                  <button
+                    onClick={handleSearchSubmit}
+                    className="w-full flex items-center justify-center gap-2 py-4 text-sm font-bold text-green-700 hover:bg-green-50 transition-colors"
+                  >
+                    See all results for "{searchQuery}" <ArrowRight size={14} />
+                  </button>
+                </>
               ) : (
-                <div className="h-full flex flex-col items-center justify-center text-center opacity-50">
-                  <ShoppingBag size={48} className="text-slate-200 mb-4" />
-                  <p className="text-sm font-bold text-slate-400">Start typing to see hardware...</p>
+                <div className="py-14 text-center">
+                  <ShoppingBag size={36} className="text-slate-200 mx-auto mb-3" />
+                  <p className="text-sm font-medium text-slate-400">
+                    No components found for "{searchQuery}"
+                  </p>
                 </div>
               )}
             </div>
-          </div>
+          )}
 
-          <button 
-            onClick={handleSearchSubmit}
-            className="w-full bg-slate-50 p-4 text-center text-sm font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-colors flex items-center justify-center gap-2"
-          >
-            See all results for "{searchQuery || '...'}" <ArrowRight size={16} />
-          </button>
-</>
-
-}      
+          {/* Popular tags */}
+          {searchQuery.length === 0 && (
+            <div className="px-5 py-6">
+              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-300 mb-3">
+                Popular Searches
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {["ESP32", "Arduino", "OLED Display", "LiFePO4", "Servo Motor", "STM32"].map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => setSearchQuery(t)}
+                    className="px-3.5 py-1.5 rounded-full text-sm font-medium text-slate-600 border border-slate-200 hover:border-green-300 hover:text-green-700 hover:bg-green-50 transition-all"
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>

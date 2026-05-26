@@ -63,10 +63,10 @@ export default async function AllProducts({
         </header>
 
         {/* Dynamic Filter UI */}
-        <FilterBar totalProducts={count || 0} />
+        {/* <FilterBar totalProducts={count || 0} /> */}
 
         {/* Product Grid - Matching image_aed2da.png */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 md:gap-x-8 gap-y-16 py-10">
+        <div className="grid min-[600px]:max-[770px]:grid-cols-3 max-[600px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-x-3 md:gap-x-4 gap-y-5 py-10">
           {products?.map((product) => (
             <Link
               key={product.id}

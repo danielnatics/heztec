@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
-import Image from "next/image";
-import Link from "next/link";
 
 
 export const metadata: Metadata = {

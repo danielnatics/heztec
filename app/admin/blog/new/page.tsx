@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter, useParams } from "next/navigation";
 import { useEditor, EditorContent } from "@tiptap/react";
@@ -12,8 +12,9 @@ import { common, createLowlight } from "lowlight";
 import {
   Bold, Italic, Strikethrough, Code, Heading1, Heading2, Heading3,
   List, ListOrdered, Quote, Minus, Image as ImageIcon, Link as LinkIcon,
-  Save, Send, ArrowLeft, X, Upload,
+  Save, Send, ArrowLeft, X, Upload, Loader2
 } from "lucide-react";
+import { toast } from "sonner";
 
 const lowlight = createLowlight(common);
 
@@ -62,7 +63,11 @@ export default function BlogEditor() {
   useEffect(() => {
     if (!isEdit || !params?.id) return;
     const load = async () => {
-      const { data } = await supabase.from("blog_posts").select("*").eq("id", params.id).single();
+      const { data, error } = await supabase.from("blog_posts").select("*").eq("id", params.id).single();
+      if (error) {
+        toast.error("Failed to load existing post data.");
+        return;
+      }
       if (!data) return;
       setTitle(data.title);
       setSlug(data.slug);
@@ -77,7 +82,7 @@ export default function BlogEditor() {
       editor?.commands.setContent(data.content || "");
     };
     load();
-  }, [isEdit, params?.id, editor]);
+  }, [isEdit, params?.id, editor, supabase]);
 
   // Auto-generate slug from title
   useEffect(() => {
@@ -88,18 +93,31 @@ export default function BlogEditor() {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
-    const ext = file.name.split(".").pop();
-    const fileName = `cover_${Date.now()}.${ext}`;
-    const { data, error } = await supabase.storage.from("blog-images").upload(fileName, file, { upsert: true });
-    if (!error && data) {
-      const { data: urlData } = supabase.storage.from("blog-images").getPublicUrl(data.path);
-      setCoverImage(urlData.publicUrl);
+    try {
+      const ext = file.name.split(".").pop();
+      const fileName = `cover_${Date.now()}.${ext}`;
+      const { data, error } = await supabase.storage.from("blog-images").upload(fileName, file, { upsert: true });
+      
+      if (error) throw error;
+      
+      if (data) {
+        const { data: urlData } = supabase.storage.from("blog-images").getPublicUrl(data.path);
+        setCoverImage(urlData.publicUrl);
+        toast.success("Cover asset uploaded successfully!");
+      }
+    } catch (err: any) {
+      toast.error("Asset Upload Failed: " + err.message);
+    } finally {
+      setUploading(false);
     }
-    setUploading(false);
   };
 
   const handleSave = async (saveStatus: "draft" | "published") => {
-    if (!title.trim() || !editor) return;
+    if (!title.trim() || !editor) {
+      toast.warning("Please provide an article title before attempting to save.");
+      return;
+    }
+    
     setSaving(true);
     const payload = {
       title: title.trim(),
@@ -115,15 +133,38 @@ export default function BlogEditor() {
       published_at: saveStatus === "published" ? new Date().toISOString() : null,
     };
 
-    if (isEdit && params?.id) {
-      await supabase.from("blog_posts").update(payload).eq("id", params.id);
-    } else {
-      await supabase.from("blog_posts").insert(payload);
+    try {
+      if (isEdit && params?.id) {
+        const { error: updateError } = await supabase
+          .from("blog_posts")
+          .update(payload)
+          .eq("id", params.id);
+          
+        if (updateError) throw updateError;
+        toast.success("Blog article updated successfully!");
+      } else {
+        const { error: insertError } = await supabase
+          .from("blog_posts")
+          .insert([payload]); // Insert execution handles rows inside wrapper arrays
+          
+        if (insertError) throw insertError;
+        toast.success("New blog article published to database ecosystem!");
+      }
+
+      setSaved(true);
+      setStatus(saveStatus);
+      setTimeout(() => setSaved(false), 2000);
+
+      if (saveStatus === "published") {
+        router.push("/admin/blog");
+        router.refresh();
+      }
+    } catch (err: any) {
+      console.error("HezTec Blog Save Error:", err);
+      toast.error(`Database Write Aborted: ${err.message || "Forbidden operation"}`);
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-    if (saveStatus === "published") router.push("/admin/blog");
   };
 
   const addImage = () => {
@@ -138,7 +179,7 @@ export default function BlogEditor() {
 
   const ToolbarBtn = ({ onClick, active, title, children }: any) => (
     <button type="button" onClick={onClick} title={title}
-      className={`p-2 rounded-lg transition-all ${active ? "bg-green-100 text-green-700" : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"}`}>
+      className={`p-2 rounded-lg transition-all cursor-pointer ${active ? "bg-green-100 text-green-700" : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"}`}>
       {children}
     </button>
   );
@@ -171,7 +212,7 @@ export default function BlogEditor() {
       <div className="bg-white border-b border-slate-100 px-6 lg:px-10 py-4 flex items-center justify-between gap-4 sticky top-0 z-40">
         <div className="flex items-center gap-3">
           <button onClick={() => router.push("/admin/blog")}
-            className="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all">
+            className="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all cursor-pointer">
             <ArrowLeft size={18} />
           </button>
           <div>
@@ -191,13 +232,13 @@ export default function BlogEditor() {
             </span>
           )}
           <button onClick={() => handleSave("draft")} disabled={saving}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-sm text-slate-700 border border-slate-200 hover:bg-slate-50 transition-all disabled:opacity-50">
-            <Save size={14} /> Save Draft
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-sm text-slate-700 border border-slate-200 hover:bg-slate-50 transition-all disabled:opacity-50 cursor-pointer">
+            {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />} Save Draft
           </button>
           <button onClick={() => handleSave("published")} disabled={saving}
-            className="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-bold text-sm text-white transition-all disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-bold text-sm text-white transition-all disabled:opacity-50 cursor-pointer"
             style={{ background: "#16a34a" }}>
-            <Send size={14} /> {isEdit && status === "published" ? "Update" : "Publish"}
+            {saving ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />} {isEdit && status === "published" ? "Update" : "Publish"}
           </button>
         </div>
       </div>
@@ -206,7 +247,6 @@ export default function BlogEditor() {
 
         {/* ── EDITOR (left, 2 cols) ── */}
         <div className="lg:col-span-2 space-y-4">
-
           {/* Title */}
           <div className="bg-white rounded-2xl border border-slate-100 p-6">
             <input
@@ -251,15 +291,14 @@ export default function BlogEditor() {
 
         {/* ── SIDEBAR (right, 1 col) ── */}
         <div className="space-y-5">
-
           {/* Cover Image */}
           <div className="bg-white rounded-2xl border border-slate-100 p-5">
             <p className="text-xs font-black uppercase tracking-widest text-slate-400 mb-4">Cover Image</p>
             {coverImage ? (
               <div className="relative">
                 <img src={coverImage} alt="Cover" className="w-full h-40 object-cover rounded-xl" />
-                <button onClick={() => setCoverImage("")}
-                  className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow text-slate-500 hover:text-red-500 transition-colors">
+                <button type="button" onClick={() => setCoverImage("")}
+                  className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow text-slate-500 hover:text-red-500 transition-colors cursor-pointer">
                   <X size={13} />
                 </button>
               </div>
@@ -298,7 +337,7 @@ export default function BlogEditor() {
             <div>
               <label className="text-xs font-semibold text-slate-500 block mb-1.5">Category</label>
               <select value={category} onChange={e => setCategory(e.target.value)}
-                className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 outline-none focus:border-green-400 text-slate-700">
+                className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 outline-none focus:border-green-400 text-slate-700 bg-transparent">
                 {CATEGORIES.map(c => <option key={c}>{c}</option>)}
               </select>
             </div>
@@ -340,21 +379,8 @@ export default function BlogEditor() {
               />
             </div>
           </div>
-
-          {/* Publish actions */}
-          <div className="bg-white rounded-2xl border border-slate-100 p-5 space-y-3">
-            <p className="text-xs font-black uppercase tracking-widest text-slate-400 mb-1">Actions</p>
-            <button onClick={() => handleSave("draft")} disabled={saving}
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm text-slate-700 border border-slate-200 hover:bg-slate-50 transition-all disabled:opacity-50">
-              <Save size={14} /> Save as Draft
-            </button>
-            <button onClick={() => handleSave("published")} disabled={saving}
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm text-white transition-all disabled:opacity-50"
-              style={{ background: "#16a34a" }}>
-              <Send size={14} /> {isEdit && status === "published" ? "Update Post" : "Publish Post"}
-            </button>
-          </div>
         </div>
+
       </div>
     </div>
   );

@@ -9,6 +9,7 @@ import {
   Plus,
   ChevronRight,
   ArrowRight,
+  ChevronDown,
   ChevronLeft,
   Package,
 } from "lucide-react";
@@ -19,10 +20,13 @@ export default function ProductDetailsClient({
   recommendations,
 }: any) {
   const [quantity, setQuantity] = useState(1);
-  
+  const [isNameExpanded, setIsNameExpanded] = useState(false);
   // Track images via array index instead of string URLs for easier sliding
   const [currentIndex, setCurrentIndex] = useState(0);
-  const images = product.images && product.images.length > 0 ? product.images : ["/placeholder.png"];
+  const images =
+    product.images && product.images.length > 0
+      ? product.images
+      : ["/placeholder.png"];
   const activeImage = images[currentIndex];
 
   const increment = () => setQuantity((prev) => prev + 1);
@@ -38,21 +42,19 @@ export default function ProductDetailsClient({
   };
 
   const formattedTotalPrice = Number(
-    (product.offer_price || product.price) * quantity
+    (product.offer_price || product.price) * quantity,
   ).toLocaleString();
 
   return (
     <div className="min-h-screen bg-white font-sans pb-24 md:pb-0">
       <main className="max-w-7xl mx-auto md:py-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 lg:gap-24">
-          
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5 lg:gap-24">
           {/* --- LEFT: GALLERY & TECHNICAL INFO --- */}
           <div className="lg:col-span-7 space-y-16">
             {/* Gallery Slider Layout */}
             <div className="space-y-6">
-              
               {/* Main Viewport Window with Hand-Swipe Tracking Logic */}
-              <div 
+              <div
                 className="relative aspect-square w-full bg-slate-50 border border-slate-100 overflow-hidden p-10 md:p-16 group touch-pan-y"
                 onTouchStart={(e) => {
                   const touchStartX = e.touches[0].clientX;
@@ -61,7 +63,7 @@ export default function ProductDetailsClient({
                 onTouchEnd={(e) => {
                   const touchStartX = (e.currentTarget as any)._touchStartX;
                   if (touchStartX === undefined) return;
-                  
+
                   const touchEndX = e.changedTouches[0].clientX;
                   const swipeDistance = touchStartX - touchEndX;
                   const swipeThreshold = 50;
@@ -71,7 +73,7 @@ export default function ProductDetailsClient({
                   } else if (swipeDistance < -swipeThreshold) {
                     prevSlide();
                   }
-                  
+
                   delete (e.currentTarget as any)._touchStartX;
                 }}
               >
@@ -119,9 +121,37 @@ export default function ProductDetailsClient({
             <div className="lg:sticky lg:top-28 space-y-8">
               <div className="bg-white shadow-2xl shadow-slate-200/40 space-y-10">
                 <div className="space-y-4">
-                  <h1 className="text-xl md:text-5xl font-normal text-slate-900 tracking-tighter leading-[0.95]">
+                  {/* <h1 className="text-xl md:text-5xl font-normal text-slate-900 ">
                     {product.name}
-                  </h1>
+                  </h1> */}
+                  <div className="space-y-2">
+                    <div className="flex items-start gap-2 group justify-between">
+                      <h1
+                        className={`text-xl md:text-5xl font-normal text-slate-900 leading-tight transition-all duration-300 ${
+                          isNameExpanded ? "" : "line-clamp-2 overflow-hidden"
+                        }`}
+                      >
+                        {product.name}
+                      </h1>
+
+                      {/* Only show the chevron if the name is reasonably long, or keep it always active as a toggle */}
+                      <button
+                        type="button"
+                        onClick={() => setIsNameExpanded(!isNameExpanded)}
+                        className="p-1 hover:bg-slate-50 rounded-lg text-slate-500 hover:text-slate-900 transition-colors mt-1 md:mt-3 flex-shrink-0"
+                        aria-label={
+                          isNameExpanded ? "Collapse name" : "Expand name"
+                        }
+                      >
+                        <ChevronDown
+                          size={24}
+                          className={`transition-transform duration-300 ${
+                            isNameExpanded ? "rotate-180" : ""
+                          }`}
+                        />
+                      </button>
+                    </div>
+                  </div>
                   <div className="flex items-center gap-4 pt-1">
                     <span className="text-slate-400 line-through ">
                       ₦{Number(product.price).toLocaleString()}
@@ -168,7 +198,7 @@ export default function ProductDetailsClient({
                     </button>
                   </div>
                 </div>
-                
+
                 {/* Product Description, Features & Specs */}
                 <div className="space-y-6 pt-4 md:pt-0">
                   <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
@@ -206,16 +236,14 @@ export default function ProductDetailsClient({
                     </ul>
                   </section>
                 </div>
-
               </div>
             </div>
           </div>
-          
         </div>
 
         {/* --- RECOMMENDATIONS (YOU MAY ALSO LIKE) --- */}
         {recommendations && recommendations.length > 0 && (
-          <section className="mt-32 md:mt-48 pt-20 border-t border-slate-100">
+          <section className="mt-10 md:mt-48 pt-20 border-t border-slate-100">
             <div className="flex items-end justify-between mb-12 px-2">
               <div className="space-y-2">
                 <h2 className="text-2xl font-medium text-slate-900 tracking-tighter">
@@ -249,22 +277,28 @@ export default function ProductDetailsClient({
       {/* --- FIXED MOBILE STICKY BOTTOM ACTION BAR --- */}
       <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg border-t border-slate-100 z-50 p-4 shadow-[0_-8px_30px_rgb(0,0,0,0.04)] md:hidden flex items-center justify-between gap-4 animate-in fade-in slide-in-from-bottom duration-300">
         <div className="flex flex-col">
-          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Price</span>
-          <span className="text-xl font-black text-slate-900">₦{formattedTotalPrice}</span>
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+            Total Price
+          </span>
+          <span className="text-xl font-black text-slate-900">
+            ₦{formattedTotalPrice}
+          </span>
         </div>
-        
+
         {/* Compact Quantity Select Block */}
         <div className="flex items-center border border-slate-200 rounded-lg p-0.5 bg-slate-50">
-          <button 
-            onClick={decrement} 
+          <button
+            onClick={decrement}
             className="w-8 h-8 flex items-center justify-center text-slate-500 active:scale-90"
             type="button"
           >
             <Minus size={14} />
           </button>
-          <span className="w-6 text-center font-bold text-sm text-slate-900">{quantity}</span>
-          <button 
-            onClick={increment} 
+          <span className="w-6 text-center font-bold text-sm text-slate-900">
+            {quantity}
+          </span>
+          <button
+            onClick={increment}
             className="w-8 h-8 flex items-center justify-center text-slate-500 active:scale-90"
             type="button"
           >
@@ -273,7 +307,7 @@ export default function ProductDetailsClient({
         </div>
 
         {/* Primary CTA Action Toggle */}
-        <button 
+        <button
           className="flex-1 max-w-[160px] bg-emerald-800 text-white font-bold h-11 rounded-lg text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.97] transition-all"
           type="button"
         >

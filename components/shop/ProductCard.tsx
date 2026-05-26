@@ -130,16 +130,17 @@ export default function ProductCard({ product }: ProductCardProps) {
           href={`/shop/${product.id}`}
           className="block group-hover:underline decoration-slate-400"
         >
-          <h3 className="text-slate-800 text-sm font-normal line-clamp-2 leading-tight h-[2.5rem]">
+          <h3 className="text-slate-800 text-sm font-normal  leading-tight  line-clamp-2">
             {product.name}
           </h3>
         </Link>
 
         {/* Dynamic Pricing Row */}
-        <div className="flex items-center justify-between  flex-wrap gap-x-2">
+        <div className="flex items-center justify-between flex-wrap gap-x-2 mt-3">
           <div className="flex items-baseline gap-1.5">
-            <span className="text-xl font-bold text-slate-900">
-             <span className="text-[13px]">₦</span>{Number(product.offer_price || product.price).toLocaleString()}
+            <span className="text-lg font-bold text-slate-900">
+              <span className="text-[13px]">₦</span>
+              {Number(product.offer_price || product.price).toLocaleString()}
             </span>
             {product.offer_price && (
               <span className="text-xs text-slate-400 line-through">
@@ -157,10 +158,10 @@ export default function ProductCard({ product }: ProductCardProps) {
           {/* Quick Add To Cart Button */}
           <button
             type="button"
-            className="w-10 h-9 cursor-pointer border border-slate-500 rounded-2xl flex items-center justify-center text-slate-800 hover:bg-slate-50 hover:border-slate-900 active:scale-95 transition-all"
+            className="w-8 h-7 cursor-pointer border border-slate-500 rounded-2xl flex items-center justify-center text-slate-800 hover:bg-slate-50 hover:border-slate-900 active:scale-95 transition-all"
             onClick={handleAddToCart}
           >
-            <ShoppingCart size={20} strokeWidth={3} />
+            <ShoppingCart size={18} strokeWidth={2} />
           </button>
         </div>
 

@@ -58,7 +58,7 @@ export default async function AllProducts({
       <div className="max-w-7xl mx-auto space-y-6">
         <header>
           <h1 className="text-slate-900 font-bold text-[32px] tracking-tight">
-            Products
+           All Products
           </h1>
         </header>
 
@@ -66,7 +66,7 @@ export default async function AllProducts({
         {/* <FilterBar totalProducts={count || 0} /> */}
 
         {/* Product Grid - Matching image_aed2da.png */}
-        <div className="grid min-[600px]:max-[770px]:grid-cols-3 max-[600px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-x-3 md:gap-x-4 gap-y-5 py-10">
+        <div className="grid min-[600px]:max-[770px]:grid-cols-3 max-[600px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-x-3 md:gap-x-4 gap-y-5 py-3">
           {products?.map((product) => (
             <Link
               key={product.id}
@@ -80,7 +80,7 @@ export default async function AllProducts({
                     src={product.images[0]}
                     alt={product.name}
                     fill
-                    className="object-contain p-1 group-hover:scale-105 transition-transform duration-700"
+                    className="object-contain p-1 group-hover transition-transform duration-700"
                     sizes="(max-width: 768px) 50vw, 25vw"
                   />
                 ) : (

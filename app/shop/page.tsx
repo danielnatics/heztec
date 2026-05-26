@@ -31,7 +31,7 @@ export default async function MarketplaceLanding() {
       `}</style>
 
       {/* ── GREEN TOP BAR ── */}
-      <div className="h-1 w-full bg-green-600" />
+      {/* <div className="h-1 w-full bg-green-600" /> */}
 
       {/* ── HERO ─────────────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-white border-b border-slate-100">
@@ -47,18 +47,18 @@ export default async function MarketplaceLanding() {
 
 
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 py-24 md:py-32">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 py-10 md:py-10">
           {/* Eyebrow */}
-          <div className="flex items-center gap-3 mb-8">
+          {/* <div className="flex items-center gap-3 mb-8">
             <div className="w-7 h-[2px] bg-green-600" />
             <span className="text-xs font-bold tracking-[0.22em] uppercase text-slate-400">
               Electronic Components
             </span>
-          </div>
+          </div> */}
 
           {/* Headline */}
           <h1 className="fade-up d2 text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 tracking-tight leading-tight max-w-2xl">
-            Browse Our Latest <span className="text-green-600">Products.</span>
+            Browse Our <span className="text-green-600">Products.</span>
           </h1>
 
           <p className="mt-6 text-base text-slate-500 leading-relaxed max-w-md">
@@ -85,7 +85,7 @@ export default async function MarketplaceLanding() {
       </section>
 
       {/* ── CATEGORY PILLS ───────────────────────────────────── */}
-      <section className="py-10 border-b border-slate-100 bg-slate-50/60">
+      {/* <section className="py-10 border-b border-slate-100 bg-slate-50/60">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="flex flex-wrap gap-3 items-center">
             <span className="text-xs font-black uppercase tracking-[0.2em] text-slate-300 mr-2">Browse</span>
@@ -106,23 +106,23 @@ export default async function MarketplaceLanding() {
             </Link>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* ── FEATURED PRODUCTS ────────────────────────────────── */}
-      <section className="py-20 md:py-28 bg-white">
+      <section className="py-10 md:py-10 bg-white">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
 
           {/* Section header */}
-          <div className="flex items-end justify-between mb-12">
+          <div className="flex items-end justify-between">
             <div>
               <p className="text-xs font-bold tracking-[0.22em] uppercase text-green-600 mb-3 flex items-center gap-2">
                 <span className="w-5 h-[2px] bg-green-600 inline-block" /> Featured Products
               </p>
-              <h2
+              {/* <h2
                 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight"
               >
                 Hand-Picked Components.
-              </h2>
+              </h2> */}
             </div>
             <Link
               href="/shop/all"
@@ -135,12 +135,12 @@ export default async function MarketplaceLanding() {
 
           {/* Product grid */}
           {featuredProducts && featuredProducts.length > 0 ? (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
+            <div className="grid min-[600px]:max-[770px]:grid-cols-3 max-[600px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-x-3 md:gap-x-4 gap-y-5 py-10">
               {featuredProducts.map((product) => (
                 <Link
                   key={product.id}
                   href={`/shop/${product.id}`}
-                  className="product-card group flex flex-col rounded-2xl border border-slate-100 overflow-hidden hover:shadow-lg hover:shadow-slate-900/5 hover:border-green-100 transition-all duration-300 bg-white"
+                  className="product-card group flex flex-col rounded-xl border border-slate-100 overflow-hidden hover:shadow-lg hover:shadow-slate-900/5 hover:border-green-100 transition-all duration-300 bg-white"
                 >
                   {/* Image */}
                   <div className="relative aspect-square w-full overflow-hidden bg-slate-50 p-4">
@@ -157,12 +157,12 @@ export default async function MarketplaceLanding() {
                       </div>
                     )}
                     {/* Featured badge */}
-                    <div
+                    {/* <div
                       className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white"
                       style={{ background: "#16a34a" }}
                     >
                       Featured
-                    </div>
+                    </div> */}
                   </div>
 
                   {/* Info */}
@@ -170,14 +170,14 @@ export default async function MarketplaceLanding() {
                     <h3 className="font-bold text-slate-900 text-sm leading-snug group-hover:text-green-700 transition-colors line-clamp-2">
                       {product.name}
                     </h3>
-                    {product.category && (
+                    {/* {product.category && (
                       <span className="text-[10px] font-bold uppercase tracking-widest text-slate-300">
                         {product.category}
                       </span>
-                    )}
+                    )} */}
                     <div className="flex items-center justify-between mt-auto pt-3">
                       <span className="text-base font-black text-slate-900">
-                        ${Number(product.offer_price || product.price).toLocaleString()}
+                        ₦{Number(product.offer_price || product.price).toLocaleString()}
                       </span>
                       <div
                         className="w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all"
@@ -215,7 +215,7 @@ export default async function MarketplaceLanding() {
       </section>
 
       {/* ── TRUST STRIP ──────────────────────────────────────── */}
-      <section className="py-12 border-t border-slate-100 bg-slate-50/60">
+      {/* <section className="py-12 border-t border-slate-100 bg-slate-50/60">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
@@ -232,7 +232,7 @@ export default async function MarketplaceLanding() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 }

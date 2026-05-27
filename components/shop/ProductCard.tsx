@@ -24,7 +24,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const itemCount = cartItem ? cartItem.quantity : 0;
 
   return (
-    <div className="group relative flex flex-col bg-white overflow-hidden border border-slate-100 rounded-2xl hover:shadow-md transition-all duration-300">
+    <div className="group relative flex flex-col bg-white overflow-hidden border border-slate-100 hover:shadow-md transition-all duration-300">
       {/* IMAGE CONTAINER WITH HOVER OVERLAY */}
       <Link
         href={`/shop/${product.id}`}
@@ -62,11 +62,11 @@ export default function ProductCard({ product }: ProductCardProps) {
               <span className="text-[13px] mr-0.5">₦</span>
               {Number(product.offer_price || product.price).toLocaleString()}
             </span>
-            {product.offer_price && (
+            {/* {product.offer_price && (
               <span className="text-xs text-slate-400 line-through">
                 ₦{Number(product.price).toLocaleString()}
               </span>
-            )}
+            )} */}
           </div>
 
           {/* Quick Add To Cart Button with Absolute Floating Badge */}
@@ -79,7 +79,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               addToCart(product, 1);
             }}
           >
-            <ShoppingCart size={15} strokeWidth={2.5} />
+            <ShoppingCart size={18} strokeWidth={2.5} />
             
             {/* Counter Badge: Renders dynamically only if quantity > 0 */}
             {itemCount > 0 && (

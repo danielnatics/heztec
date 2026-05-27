@@ -1,5 +1,6 @@
 export const revalidate = 0; // Force Next.js to bypass caching and run this function on every fresh page refresh
 import { createClient } from "@/lib/supabase/server";
+
 import Image from "next/image";
 import Link from "next/link";
 import FilterBar from "@/components/shop/FilterBar";

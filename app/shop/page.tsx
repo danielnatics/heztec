@@ -3,10 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import Image from "next/image";
 import Link from "next/link";
 import ProductCard from "@/components/shop/ProductCard";
-import {
-  ArrowRight,
-  Package,
-} from "lucide-react";
+import { ArrowRight, Package } from "lucide-react";
 
 export default async function MarketplaceLanding() {
   const supabase = await createClient();
@@ -21,8 +18,8 @@ export default async function MarketplaceLanding() {
 
   // 2. Shuffle the items randomly in memory and slice the top 5 (or 4 depending on your layout grid)
   // We use .sort(() => Math.random() - 0.5) to scramble the array on every request refresh
-  const featuredProducts = allFeatured 
-    ? [...allFeatured].sort(() => Math.random() - 0.5).slice(0, 5) 
+  const featuredProducts = allFeatured
+    ? [...allFeatured].sort(() => Math.random() - 0.5).slice(0, 12)
     : [];
 
   const categories = [
@@ -89,7 +86,7 @@ export default async function MarketplaceLanding() {
 
           {/* Product grid */}
           {featuredProducts && featuredProducts.length > 0 ? (
-            <div className="grid min-[600px]:max-[770px]:grid-cols-2 max-[600px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-x-3 md:gap-x-4 gap-y-5 py-5">
+            <div className="grid min-[600px]:max-[770px]:grid-cols-2 max-[600px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-x-3 md:gap-x-4 gap-y-2 py-5">
               {featuredProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}

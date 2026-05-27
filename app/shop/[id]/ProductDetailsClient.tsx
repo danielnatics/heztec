@@ -13,6 +13,8 @@ import {
   ChevronLeft,
   Package,
 } from "lucide-react";
+import { useCart } from "@/context/CartContext";
+
 import ProductCard from "@/components/shop/ProductCard";
 
 export default function ProductDetailsClient({
@@ -20,6 +22,7 @@ export default function ProductDetailsClient({
   recommendations,
 }: any) {
   const [quantity, setQuantity] = useState(1);
+  const { addToCart } = useCart();
   const [isNameExpanded, setIsNameExpanded] = useState(false);
   // Track images via array index instead of string URLs for easier sliding
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -44,6 +47,11 @@ export default function ProductDetailsClient({
   const formattedTotalPrice = Number(
     (product.offer_price || product.price) * quantity,
   ).toLocaleString();
+
+  // Unified execution handler for the operational state action pipelines
+  const handleAddToCartAction = () => {
+    addToCart(product, quantity);
+  };
 
   return (
     <div className="min-h-screen bg-white font-sans pb-24 md:pb-0">
@@ -90,7 +98,7 @@ export default function ProductDetailsClient({
                 {images.length > 1 && (
                   <button
                     onClick={prevSlide}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/80 backdrop-blur-sm shadow-md border border-slate-100 text-slate-800 hover:bg-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden md:flex"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/80 backdrop-blur-sm shadow-md border border-slate-100 text-slate-800 hover:bg-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden md:flex cursor-pointer"
                     type="button"
                   >
                     <ChevronLeft size={20} strokeWidth={2.5} />
@@ -101,7 +109,7 @@ export default function ProductDetailsClient({
                 {images.length > 1 && (
                   <button
                     onClick={nextSlide}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/80 backdrop-blur-sm shadow-md border border-slate-100 text-slate-800 hover:bg-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden md:flex"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/80 backdrop-blur-sm shadow-md border border-slate-100 text-slate-800 hover:bg-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden md:flex cursor-pointer"
                     type="button"
                   >
                     <ChevronRight size={20} strokeWidth={2.5} />
@@ -121,9 +129,6 @@ export default function ProductDetailsClient({
             <div className="lg:sticky lg:top-28 space-y-8">
               <div className="bg-white shadow-2xl shadow-slate-200/40 space-y-10">
                 <div className="space-y-4">
-                  {/* <h1 className="text-xl md:text-5xl font-normal text-slate-900 ">
-                    {product.name}
-                  </h1> */}
                   <div className="space-y-2">
                     <div className="flex items-start gap-2 group justify-between">
                       <h1
@@ -134,11 +139,10 @@ export default function ProductDetailsClient({
                         {product.name}
                       </h1>
 
-                      {/* Only show the chevron if the name is reasonably long, or keep it always active as a toggle */}
                       <button
                         type="button"
                         onClick={() => setIsNameExpanded(!isNameExpanded)}
-                        className="p-1 hover:bg-slate-50 rounded-lg text-slate-500 hover:text-slate-900 transition-colors mt-1 md:mt-3 flex-shrink-0"
+                        className="p-1 hover:bg-slate-50 rounded-lg text-slate-500 hover:text-slate-900 transition-colors mt-1 md:mt-3 flex-shrink-0 cursor-pointer"
                         aria-label={
                           isNameExpanded ? "Collapse name" : "Expand name"
                         }
@@ -174,7 +178,7 @@ export default function ProductDetailsClient({
                     <div className="flex items-center w-full max-w-[180px] border border-emerald-900 rounded-xl p-1.5">
                       <button
                         onClick={decrement}
-                        className="w-12 h-12 flex items-center justify-center bg-white border border-slate-100 text-slate-600 hover:text-emerald-600 transition-all"
+                        className="w-12 h-12 flex items-center justify-center bg-white border border-slate-100 text-slate-600 hover:text-emerald-600 transition-all cursor-pointer"
                         type="button"
                       >
                         <Minus size={16} />
@@ -184,7 +188,7 @@ export default function ProductDetailsClient({
                       </span>
                       <button
                         onClick={increment}
-                        className="w-12 h-12 flex items-center justify-center bg-white border border-slate-100 text-slate-600 hover:text-emerald-600 transition-all"
+                        className="w-12 h-12 flex items-center justify-center bg-white border border-slate-100 text-slate-600 hover:text-emerald-600 transition-all cursor-pointer"
                         type="button"
                       >
                         <Plus size={16} />
@@ -193,7 +197,12 @@ export default function ProductDetailsClient({
                   </div>
 
                   <div className="flex flex-col gap-4">
-                    <button className="w-full bg-emerald-800 text-white font-black py-6 rounded-[2rem] transition-all flex items-center justify-center gap-3 border border-emerald-900 hover:bg-emerald-900 active:scale-[0.98]">
+                    {/* CORE DESKTOP ADD TO CART BUTTON HANDLER */}
+                    <button 
+                      type="button"
+                      onClick={handleAddToCartAction}
+                      className="w-full bg-emerald-800 text-white font-black py-6 rounded-[2rem] transition-all flex items-center justify-center gap-3 border border-emerald-900 hover:bg-emerald-900 active:scale-[0.98] cursor-pointer"
+                    >
                       <ShoppingCart size={22} /> Add to Cart
                     </button>
                   </div>
@@ -289,7 +298,7 @@ export default function ProductDetailsClient({
         <div className="flex items-center border border-slate-200 rounded-lg p-0.5 bg-slate-50">
           <button
             onClick={decrement}
-            className="w-8 h-8 flex items-center justify-center text-slate-500 active:scale-90"
+            className="w-8 h-8 flex items-center justify-center text-slate-500 active:scale-90 cursor-pointer"
             type="button"
           >
             <Minus size={14} />
@@ -299,16 +308,17 @@ export default function ProductDetailsClient({
           </span>
           <button
             onClick={increment}
-            className="w-8 h-8 flex items-center justify-center text-slate-500 active:scale-90"
+            className="w-8 h-8 flex items-center justify-center text-slate-500 active:scale-90 cursor-pointer"
             type="button"
           >
             <Plus size={14} />
           </button>
         </div>
 
-        {/* Primary CTA Action Toggle */}
+        {/* CORE MOBILE ADD TO CART BUTTON HANDLER */}
         <button
-          className="flex-1 max-w-[160px] bg-emerald-800 text-white font-bold h-11 rounded-lg text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.97] transition-all"
+          onClick={handleAddToCartAction}
+          className="flex-1 max-w-[160px] bg-emerald-800 text-white font-bold h-11 rounded-lg text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.97] transition-all cursor-pointer"
           type="button"
         >
           <ShoppingCart size={14} /> Add to Cart

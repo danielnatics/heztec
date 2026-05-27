@@ -27,6 +27,7 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
     { name: "Product List", href: "/admin/products", icon: <Package size={20} /> },
     { name: "Add Product", href: "/admin/products/new", icon: <PlusCircle size={20} /> },
     { name: "Blog", href: "/admin/blog", icon: <BookOpen size={20} /> },
+    { name: "Orders", href: "/admin/orders", icon: <Package size={20} /> },
     { name: "Settings", href: "/admin/settings", icon: <Settings size={20} /> },
   ];
 

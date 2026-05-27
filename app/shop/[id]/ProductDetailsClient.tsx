@@ -210,11 +210,11 @@ export default function ProductDetailsClient({
 
                 {/* Product Description, Features & Specs */}
                 <div className="space-y-6 pt-4 md:pt-0">
-                  <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <div className="w-1 h-8 bg-emerald-500 rounded-full" />
+                  <h2 className="text-xl font-medium text-slate-900 tracking-tight flex items-center gap-2">
+                    {/* <div className="w-1 h-8 bg-emerald-500 rounded-full" /> */}
                     Features
                   </h2>
-                  <p className="text-slate-600 text-[14px] leading-relaxed whitespace-pre-wrap font-medium">
+                  <p className="text-slate-700 text-[14px] leading-relaxed whitespace-pre-wrap font-medium">
                     {product.description ||
                       "High-performance engineering component sourced and tested at HezTec Innovation Labs."}
                   </p>
@@ -229,17 +229,17 @@ export default function ProductDetailsClient({
                         </h2>
                       )}
 
-                    <ul className="space-y-3 px-2">
+                    <ul className="space-y-1 px-2 text-[14px]">
                       {product.specs &&
                         Array.isArray(product.specs) &&
                         product.specs.length > 0 &&
                         product.specs.map((sentence: string, i: number) => (
                           <li
                             key={i}
-                            className="flex items-start gap-3 text-slate-600 leading-relaxed"
+                            className="flex items-start gap-2 text-slate-600 leading-relaxed"
                           >
                             <span className="mt-2 w-1.5 h-1.5 rounded-full bg-slate-400 flex-shrink-0" />
-                            <span className="text-lg">{sentence}</span>
+                            <span className="text">{sentence}</span>
                           </li>
                         ))}
                     </ul>
@@ -274,7 +274,7 @@ export default function ProductDetailsClient({
               </Link>
             </div>
 
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-10">
               {recommendations.map((item: any) => (
                 <ProductCard key={item.id} product={item} />
               ))}
@@ -286,10 +286,10 @@ export default function ProductDetailsClient({
       {/* --- FIXED MOBILE STICKY BOTTOM ACTION BAR --- */}
       <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg border-t border-slate-100 z-50 p-4 shadow-[0_-8px_30px_rgb(0,0,0,0.04)] md:hidden flex items-center justify-between gap-4 animate-in fade-in slide-in-from-bottom duration-300">
         <div className="flex flex-col">
-          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+          <span className="text-[10px] font-medium text-slate-700 uppercase tracking-widest">
             Total Price
           </span>
-          <span className="text-xl font-black text-slate-900">
+          <span className="text-xl font-medium text-slate-900">
             ₦{formattedTotalPrice}
           </span>
         </div>

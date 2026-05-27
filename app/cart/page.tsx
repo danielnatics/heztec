@@ -56,16 +56,32 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50/50 p-4 md:p-12 font-sans">
+    <div className="min-h-screen bg-slate-50/50 md:p-12 font-sans">
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
         
         {/* LEFT COLUMN: ITEMS VIEW MANIFEST */}
         <div className="lg:col-span-8 space-y-4">
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-            Shopping Manifest <span className="text-sm bg-white border border-slate-200 px-3 py-1 rounded-full text-slate-500 font-mono font-bold">{cartCount} items</span>
+          <div className="flex items-end justify-between pt-10 px-4">
+
+          <h1 className="text-3xl text-slate-900 tracking-tight flex items-center gap-3">
+            Your cart 
           </h1>
+          <div>
+             <Link
+              href="/shop/all"
+              className="md:inline-flex items-center text-sm font-bold text-slate-500 hover:text-green-700 hover:underline transition-colors group"
+            >
+              Continue shopping
+              {/* <ArrowRight
+                size={14}
+                className="group-hover:translate-x-1 transition-transform"
+              /> */}
+            </Link>
+          </div>
           
-          <div className="bg-white border border-slate-100 rounded-2xl shadow-sm divide-y divide-slate-100 overflow-hidden">
+          </div>
+
+          <div className="bg-white border border-slate-100 shadow-sm divide-y divide-slate-100 overflow-hidden">
             {cart.map((item) => {
               const activePrice = item.offer_price || item.price;
               return (
@@ -82,13 +98,13 @@ export default function CartPage() {
 
                   {/* Main Descriptive Info */}
                   <div className="flex-1 min-w-0 space-y-1">
-                    <h3 className="font-bold text-slate-900 text-sm md:text-base truncate hover:text-emerald-700 transition-colors">
+                    <h3 className="text-slate-900 text-sm md:text-base truncate hover:text-emerald-700 transition-colors">
                       <Link href={`/shop/${item.id}`}>{item.name}</Link>
                     </h3>
-                    <div className="text-sm font-black text-slate-900">
+                    <div className="text-sm font-normal text-slate-900">
                       ₦{activePrice.toLocaleString()}{" "}
                       {item.offer_price && (
-                        <span className="text-xs text-slate-400 font-normal line-through ml-1.5">
+                        <span className="text-xs text-slate-400 line-through ml-1.5">
                           ₦{item.price.toLocaleString()}
                         </span>
                       )}
@@ -98,10 +114,10 @@ export default function CartPage() {
                   {/* Controls Interface Array Row */}
                   <div className="flex flex-col md:flex-row items-end md:items-center gap-3 md:gap-8">
                     {/* Quantity Adjustment Selector Container */}
-                    <div className="flex items-center border border-slate-200 rounded-xl p-1 bg-slate-50">
+                    <div className="flex items-center border border-slate-400  p-1 bg-slate-30">
                       <button
                         onClick={() => updateQuantity(item.id, -1)}
-                        className="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-emerald-700 active:scale-90"
+                        className="w-8 h-8 flex items-center justify-center text-slate-700 hover:text-emerald-700 active:scale-90"
                         type="button"
                       >
                         <Minus size={14} strokeWidth={2.5} />
@@ -138,18 +154,18 @@ export default function CartPage() {
             
             <div className="space-y-3 font-medium text-sm text-slate-600 pb-4 border-b border-slate-100">
               <div className="flex justify-between">
-                <span>Subtotal ({cartCount} parts)</span>
+                <span>Subtotal ({cartCount} items)</span>
                 <span className="font-bold text-slate-900">₦{cartTotal.toLocaleString()}</span>
               </div>
               <div className="flex justify-between">
-                <span>Logistics / Shipping</span>
-                <span className="text-emerald-600 text-xs font-bold uppercase tracking-wider bg-emerald-50 px-2 py-0.5 rounded">Calculated next</span>
+                <span>Taxes and Shipping</span>
+                <span className="text text-xs font-bold tracking-wider px-2 py-0.5">calculated at checkout</span>
               </div>
             </div>
 
             <div className="flex justify-between items-baseline">
-              <span className="font-bold text-slate-900 text-base">Grand Total</span>
-              <span className="text-2xl font-black text-slate-900">₦{cartTotal.toLocaleString()}</span>
+              <span className="font-bold text-slate-900 text-base"> Total</span>
+              <span className="text-2xl font-bold text-slate-900">₦{cartTotal.toLocaleString()} NGN</span>
             </div>
 
             {/* Authentication Feedback Notice Banner */}
@@ -167,9 +183,9 @@ export default function CartPage() {
             <Button
               onClick={handleCheckout}
               disabled={checkingAuth}
-              className="w-full bg-emerald-950 text-white font-bold h-14 rounded-xl hover:bg-emerald-900 transition-all active:scale-[0.98] flex items-center justify-center gap-2 group text-sm"
+              className="w-full bg-emerald-950 text-white font-bold h-14 hover:bg-emerald-900 transition-all active:scale-[0.98] flex items-center justify-center gap-2 group text-sm"
             >
-              {user ? "Proceed to Checkout" : "Sign In to Checkout"}
+              {user ? "Check out" : "Sign In to Checkout"}
               <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
             </Button>
           </div>

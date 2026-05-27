@@ -19,7 +19,7 @@ export default async function MarketplaceLanding() {
   // 2. Shuffle the items randomly in memory and slice the top 5 (or 4 depending on your layout grid)
   // We use .sort(() => Math.random() - 0.5) to scramble the array on every request refresh
   const featuredProducts = allFeatured
-    ? [...allFeatured].sort(() => Math.random() - 0.5).slice(0, 12)
+    ? [...allFeatured].sort(() => Math.random() - 0.5).slice(0, 20)
     : [];
 
   const categories = [

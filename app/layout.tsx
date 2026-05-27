@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import { Toaster } from "sonner";
+import { Analytics } from "@vercel/analytics/next"
 
 export const metadata: Metadata = {
   title: "HezTec",
@@ -23,6 +24,7 @@ export default function RootLayout({
           <main>{children}</main>
         </CartProvider>
         <Toaster position="bottom-right" richColors />
+        <Analytics />
       </body>
     </html>
   );

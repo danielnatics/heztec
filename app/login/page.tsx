@@ -3,23 +3,29 @@
 import { useState, useEffect, Suspense } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
-import { 
-  Mail, 
-  Lock, 
-  Eye, 
-  EyeOff, 
-  Loader2, 
-  ArrowRight, 
-  LogIn, 
-  UserPlus, 
-  ShieldAlert 
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  Loader2,
+  ArrowRight,
+  LogIn,
+  UserPlus,
+  ShieldAlert,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { toast } from "sonner";
 
 function LoginFormInner() {
@@ -40,7 +46,9 @@ function LoginFormInner() {
   // If a session already exists, bypass the screen
   useEffect(() => {
     async function checkActiveSession() {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (session) {
         router.push(redirectTo);
       }
@@ -67,13 +75,17 @@ function LoginFormInner() {
 
         // Check if user needs to confirm email or if they are auto-logged in
         if (data?.user && data.user.identities?.length === 0) {
-          toast.warning("This email is already registered. Try signing in instead.");
+          toast.warning(
+            "This email is already registered. Try signing in instead.",
+          );
         } else if (data?.session) {
           toast.success("Account created successfully!");
           router.push(redirectTo);
           router.refresh();
         } else {
-          toast.success("Registration success! Check your email inbox for a verification link.");
+          toast.success(
+            "Registration success! Check your email inbox for a verification link.",
+          );
         }
       } else {
         // --- SIGN IN PIPELINE ---
@@ -98,48 +110,64 @@ function LoginFormInner() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50/60 p-4 font-sans">
       <Card className="w-full max-w-md border-slate-200/80 shadow-xl shadow-slate-200/30 rounded-3xl overflow-hidden bg-white">
-        
         {/* Brand/Identity Header Card Banner */}
+
         <CardHeader className="space-y-3 pb-4 text-center border-b border-slate-50 bg-slate-50/30 pt-8">
-          <Link href="/" className="inline-flex flex-col items-center gap-1 mx-auto group">
-            <div className="relative w-12 h-12 transition-transform duration-300 group-hover:scale-105">
-              <Image src="/logo.png" alt="HezTec" fill className="object-contain" priority />
+          <Link
+            href="/"
+            className="hidden inline-flex flex-col items-center gap-1 mx-auto group"
+          >
+            <div className="relative hidden w-14 h-14 transition-transform duration-300 group-hover:scale-105">
+              <Image
+                src="/logo.png"
+                alt="HezTec"
+                fill
+                className="object-contain"
+                priority
+              />
             </div>
-            <div className="leading-none text-center">
-              <span className="text-lg font-black tracking-tight text-slate-900 block">HezTec</span>
+            <div className="leading-none hidden text-center">
+              <span className="text-lg font-black tracking-tight text-slate-900 block">
+                HezTec
+              </span>
               <span className="text-[9px] font-bold tracking-[0.18em] uppercase block mt-0.5 text-green-600">
                 Engineered Excellence
               </span>
             </div>
           </Link>
           <div className="space-y-1 pt-2">
-            <CardTitle className="text-xl font-black text-slate-900 tracking-tight uppercase">
-              {isSignUp ? "Create Lab Account" : "Access Ecosystem"}
+            <CardTitle className="text-2xl font-black text-slate-900 tracking-tight uppercase">
+              {isSignUp ? "Sign Up" : "Log In"}
             </CardTitle>
-            <CardDescription className="text-xs text-slate-400 font-medium">
+            {/* <CardDescription className="text-xs text-slate-400 font-medium">
               {isSignUp 
                 ? "Register to log order specs, track components, and build cards." 
                 : "Sign in to handle marketplace assets and system features."
               }
-            </CardDescription>
+            </CardDescription> */}
           </div>
         </CardHeader>
 
-        <CardContent className="pt-6 pb-8 space-y-6">
+        <CardContent className="pt-1 pb-8 space-y-6">
           <form onSubmit={handleAuthSubmit} className="space-y-4">
-            
             {/* EMAIL FIELD LINK */}
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-wider text-slate-400 ml-0.5">
+              <Label
+                htmlFor="email"
+                className="text-[10px] font-black uppercase tracking-wider text-slate-400 ml-0.5"
+              >
                 Email Address
               </Label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+                <Mail
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300"
+                  size={16}
+                />
                 <Input
                   id="email"
                   type="email"
                   required
-                  placeholder="name@domain.com"
+                  placeholder="name@mail.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-10 h-12 bg-slate-50/50 border-slate-200 rounded-xl font-medium focus-visible:ring-green-600"
@@ -150,12 +178,15 @@ function LoginFormInner() {
             {/* PASSWORD FIELD LINK */}
             <div className="space-y-2">
               <div className="flex justify-between items-center px-0.5">
-                <Label htmlFor="password" className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                <Label
+                  htmlFor="password"
+                  className="text-[10px] font-black uppercase tracking-wider text-slate-400"
+                >
                   Password
                 </Label>
                 {!isSignUp && (
-                  <Link 
-                    href="/forgot-password" 
+                  <Link
+                    href="/forgot-password"
                     className="text-[10px] font-bold text-green-600 hover:underline tracking-tight uppercase"
                   >
                     Forgot?
@@ -163,7 +194,10 @@ function LoginFormInner() {
                 )}
               </div>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+                <Lock
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300"
+                  size={16}
+                />
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
@@ -192,17 +226,17 @@ function LoginFormInner() {
               {loading ? (
                 <>
                   <Loader2 className="animate-spin" size={18} />
-                  <span>TRANSMITTING HANDSHAKE...</span>
+                  <span>Loading...</span>
                 </>
               ) : isSignUp ? (
                 <>
                   <UserPlus size={16} />
-                  <span>REGISTER LAB PROFILE</span>
+                  <span>REGISTER PROFILE</span>
                 </>
               ) : (
                 <>
                   <LogIn size={16} />
-                  <span>SECURE SIGN IN</span>
+                  <span>SIGN IN</span>
                 </>
               )}
             </Button>
@@ -211,7 +245,9 @@ function LoginFormInner() {
           {/* DYNAMIC MODE TOGGLE ACCORDION FOOTER CONTAINER */}
           <div className="text-center pt-2">
             <p className="text-xs font-medium text-slate-500">
-              {isSignUp ? "Already have a secure account?" : "New to the HezTec platform?"}{" "}
+              {isSignUp
+                ? "Already have a secure account?"
+                : "New to the HezTec platform?"}{" "}
               <button
                 type="button"
                 onClick={() => {
@@ -224,7 +260,6 @@ function LoginFormInner() {
               </button>
             </p>
           </div>
-
         </CardContent>
       </Card>
     </div>
@@ -234,11 +269,13 @@ function LoginFormInner() {
 // Wrap inside Suspense boundary to cleanly support searchParams usage inside Next.js App Router architectures
 export default function LoginPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-slate-50/60">
-        <Loader2 className="animate-spin text-green-600" size={32} />
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-slate-50/60">
+          <Loader2 className="animate-spin text-green-600" size={32} />
+        </div>
+      }
+    >
       <LoginFormInner />
     </Suspense>
   );

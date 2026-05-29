@@ -63,12 +63,12 @@ export default function ContactPage() {
       <div className="max-w-6xl mx-auto space-y-8">
         
         {/* Back Navigation Bar */}
-        <Link
+        {/* <Link
           href="/services"
           className="inline-flex items-center gap-2 text-slate-500 font-bold text-sm hover:text-green-700 transition-colors"
         >
           <ArrowLeft size={16} /> Back to Services
-        </Link>
+        </Link> */}
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           
@@ -78,12 +78,12 @@ export default function ContactPage() {
               <p className="text-xs font-bold tracking-[0.22em] uppercase text-green-600 flex items-center gap-2">
                 <span className="w-5 h-[2px] bg-green-600 inline-block" /> Connect with Labs
               </p>
-              <h1 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight leading-none">
-                Let's Build <br />
-                <span className="text-green-600">Together.</span>
+              <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-none">
+                Let's Build 
+                <span className="text-green-600"> Together.</span>
               </h1>
               <p className="text-slate-500 font-medium text-sm leading-relaxed max-w-sm">
-                Have an engineering problem, custom battery pack request, or a marketplace order inquiry? Drop our core engineers a line.
+                Have an engineering problem, or a marketplace order inquiry? Drop our core engineers a line.
               </p>
             </div>
 
@@ -101,7 +101,7 @@ export default function ContactPage() {
                   <MessageSquare size={18} />
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">WhatsApp Lab Direct</span>
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">WhatsApp Line</span>
                   <span className="text-sm font-bold text-slate-900 truncate">08130123588</span>
                 </div>
               </a>
@@ -114,7 +114,7 @@ export default function ContactPage() {
                   <Mail size={18} />
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Official Email</span>
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Email</span>
                   <span className="text-sm font-bold text-slate-900 truncate">getheztec@gmail.com</span>
                 </div>
               </a>
@@ -156,7 +156,7 @@ export default function ContactPage() {
                   <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-wider text-slate-400">Your Name</Label>
                   <div className="relative">
                     <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
-                    <Input id="name" name="name" required placeholder="Daniel" className="pl-10 h-12 bg-slate-50/50 border-slate-200 rounded-xl font-medium focus-visible:ring-green-600" />
+                    <Input id="name" name="name" required placeholder="John" className="pl-10 h-12 bg-slate-50/50 border-slate-200 rounded-xl font-medium focus-visible:ring-green-600" />
                   </div>
                 </div>
 
@@ -164,7 +164,7 @@ export default function ContactPage() {
                   <Label htmlFor="phone" className="text-[10px] font-black uppercase tracking-wider text-slate-400">Phone Number</Label>
                   <div className="relative">
                     <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
-                    <Input id="phone" name="phone" required type="tel" placeholder="08130123588" className="pl-10 h-12 bg-slate-50/50 border-slate-200 rounded-xl font-medium focus-visible:ring-green-600" />
+                    <Input id="phone" name="phone" required type="tel" placeholder="+8190447781" className="pl-10 h-12 bg-slate-50/50 border-slate-200 rounded-xl font-medium focus-visible:ring-green-600" />
                   </div>
                 </div>
               </div>
@@ -173,7 +173,7 @@ export default function ContactPage() {
                 <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-wider text-slate-400">Email Address</Label>
                 <div className="relative">
                   <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
-                  <Input id="email" name="email" required type="email" placeholder="example@domain.com" className="pl-10 h-12 bg-slate-50/50 border-slate-200 rounded-xl font-medium focus-visible:ring-green-600" />
+                  <Input id="email" name="email" required type="email" placeholder="example@mail.com" className="pl-10 h-12 bg-slate-50/50 border-slate-200 rounded-xl font-medium focus-visible:ring-green-600" />
                 </div>
               </div>
 
@@ -182,7 +182,7 @@ export default function ContactPage() {
                 <Label htmlFor="message" className="text-[10px] font-black uppercase tracking-wider text-slate-400">Project Brief / Message</Label>
                 <div className="relative">
                   <FileText className="absolute left-3.5 top-4 text-slate-300" size={16} />
-                  <Textarea id="message" name="message" required rows={5} placeholder="Provide details here (e.g., 72V battery specs, code issue, order tracker ID, etc.)" className="pl-10 pt-3 bg-slate-50/50 border-slate-200 rounded-xl text-sm font-medium focus-visible:ring-green-600 leading-relaxed" />
+                  <Textarea id="message" name="message" required rows={5} placeholder="Provide details here" className="pl-10 pt-3 bg-slate-50/50 border-slate-200 rounded-xl text-sm font-medium focus-visible:ring-green-600 leading-relaxed" />
                 </div>
               </div>
 
@@ -195,7 +195,7 @@ export default function ContactPage() {
                 {loading ? (
                   <>
                     <Loader2 className="animate-spin" size={18} />
-                    <span>TRANSMITTING DATA PORT...</span>
+                    <span>processing..</span>
                   </>
                 ) : (
                   <>

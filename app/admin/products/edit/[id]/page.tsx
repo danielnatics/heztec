@@ -350,10 +350,20 @@ export default function EditProductPage({
                       setFormData({ ...formData, category: e.target.value })
                     }
                   >
-                    <option value="Microcontrollers">Microcontrollers</option>
-                    <option value="Sensors">Sensors</option>
-                    <option value="Power Systems">Power Systems</option>
-                    <option value="Displays">Displays</option>
+
+                    <option value="microcontroller">Microcontrollers</option>
+                  <option value="sensor">Sensors</option>
+                  <option value="power">Power & BMS</option>
+                  <option value="display">Display</option>
+                  <option value="pcb">Custom PCB</option>
+                  <option value="module">Modules</option>
+                  <option value="module">Motor and Motor Drivers</option>
+                  <option value="module">Relay and Switches</option>
+                  <option value="module">IC's</option>
+                  <option value="module">Printer</option>
+                  <option value="module">Wireless communication</option>
+                  <option value="kit">Kit</option>
+                  <option value="module">Others</option>
                   </select>
                 </div>
 

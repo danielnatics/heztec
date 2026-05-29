@@ -237,8 +237,14 @@ export default function AddProduct() {
                   <option value="power">Power & BMS</option>
                   <option value="display">Display</option>
                   <option value="pcb">Custom PCB</option>
-                  <option value="module">Module</option>
+                  <option value="module">Modules</option>
+                  <option value="module">Motor and Motor Drivers</option>
+                  <option value="module">Relay and Switches</option>
+                  <option value="module">IC's</option>
+                  <option value="module">Printer</option>
+                  <option value="module">Wireless communication</option>
                   <option value="kit">Kit</option>
+                  <option value="module">Others</option>
                 </select>
               </div>
               <div className="space-y-2">

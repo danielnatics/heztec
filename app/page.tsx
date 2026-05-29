@@ -10,6 +10,7 @@ import {
   Mail,
   MapPin,
   ArrowUpRight,
+  PhoneCall,
 } from "lucide-react";
 
 export default function Home() {
@@ -45,26 +46,25 @@ export default function Home() {
   ];
 
   const stats = [
-    { value: "50+", label: "Projects Delivered" },
+    { value: "10+", label: "Projects Delivered" },
     { value: "3+", label: "Years Experience" },
     { value: "4", label: "Core Services" },
     { value: "24hr", label: "Support Response" },
   ];
 
   const whyPoints = [
-    "Custom BMS and 72V LiFePO4 power engineering",
     "ESP32 / STM32 firmware and hardware integration",
     "Fast-turn PCB design from schematic to board",
     "Dedicated engineering support from concept to deployment",
   ];
 
   const projects = [
-    {
-      tag: "EV · Power Systems",
-      title: "72V LiFePO4 Swappable Battery Pack",
-      desc: "Full BMS integration, cell balancing, and swappable architecture for electric mobility applications.",
-      number: "01",
-    },
+    // {
+    //   tag: "EV · Power Systems",
+    //   title: "72V LiFePO4 Swappable Battery Pack",
+    //   desc: "Full BMS integration, cell balancing, and swappable architecture for electric mobility applications.",
+    //   number: "01",
+    // },
     {
       tag: "IoT · Solar",
       title: "IoT-Enabled Solar Food Dryer",
@@ -324,9 +324,12 @@ export default function Home() {
               <a href="mailto:getheztec@gmail.com" className="flex items-center gap-2 text-sm text-slate-400 hover:text-green-600 transition-colors">
                 <Mail size={13} /> getheztec@gmail.com
               </a>
-              <span className="flex items-center gap-2 text-sm text-slate-400">
+              <a href="tel:+2348130123588" className="flex items-center gap-2 text-sm text-slate-400 hover:text-green-600 transition-colors">
+                <PhoneCall size={13} /> +2348130123588
+              </a>
+              {/* <span className="flex items-center gap-2 text-sm text-slate-400">
                 <MapPin size={13} /> Available Worldwide
-              </span>
+              </span> */}
             </div>
           </div>
 

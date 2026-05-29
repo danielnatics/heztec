@@ -10,7 +10,8 @@ import {
   Menu, 
   X,
   LogOut,
-  BookOpen
+  BookOpen,
+  MessageCircleReply
 } from "lucide-react";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -28,6 +29,7 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
     { name: "Add Product", href: "/admin/products/new", icon: <PlusCircle size={20} /> },
     { name: "Blog", href: "/admin/blog", icon: <BookOpen size={20} /> },
     { name: "Orders", href: "/admin/orders", icon: <Package size={20} /> },
+    { name: "Messages", href: "/admin/messages", icon: <MessageCircleReply size={20} /> },
     { name: "Settings", href: "/admin/settings", icon: <Settings size={20} /> },
   ];
 

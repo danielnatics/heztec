@@ -97,7 +97,7 @@ export default function Navbar() {
     { name: "Shop", href: "/shop", icon: <Package size={17} /> },
     { name: "Services", href: "/services", icon: <Cpu size={17} /> },
     { name: "Blog", href: "/blog", icon: <BookOpen size={17} /> },
-    { name: "About", href: "/about", icon: <Info size={17} /> },
+    { name: "About", href: "/#", icon: <Info size={17} /> },
     { name: "Contact", href: "/contact", icon: <Phone size={17} /> },
   ];
 

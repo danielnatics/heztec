@@ -32,10 +32,10 @@ export default function EditProductPage({
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  
+
   // Track featured check status independently
   const [isFeatured, setIsFeatured] = useState(false);
-  
+
   // Dynamic specs sentence string tracking array
   const [specs, setSpecs] = useState<string[]>([""]);
 
@@ -96,7 +96,9 @@ export default function EditProductPage({
     const totalCurrentImages = formData.images.length + newFiles.length;
 
     if (totalCurrentImages + files.length > 3) {
-      toast.warning("You can only have a maximum of 3 images total for this product.");
+      toast.warning(
+        "You can only have a maximum of 3 images total for this product.",
+      );
       return;
     }
 
@@ -247,9 +249,10 @@ export default function EditProductPage({
               {/* TECHNICAL SPECIFICATIONS ARRAY FIELD */}
               <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm space-y-4">
                 <div className="flex items-center gap-2 text-xs font-black tracking-widest text-slate-900 uppercase">
-                  <Settings2 size={16} className="text-emerald-600" /> Technical Specifications
+                  <Settings2 size={16} className="text-emerald-600" /> Technical
+                  Specifications
                 </div>
-                
+
                 <div className="space-y-3 pt-2">
                   {specs.map((spec, index) => (
                     <div key={index} className="flex gap-3 items-center">
@@ -270,14 +273,15 @@ export default function EditProductPage({
                       </Button>
                     </div>
                   ))}
-                  
+
                   <Button
                     type="button"
                     variant="outline"
                     onClick={addSpecField}
                     className="w-full border-dashed border-2 border-emerald-100 text-emerald-600 hover:bg-emerald-50 font-bold text-xs h-11 rounded-xl mt-2"
                   >
-                    <Plus size={14} className="mr-2" /> ADD SPECIFICATION SENTENCE
+                    <Plus size={14} className="mr-2" /> ADD SPECIFICATION
+                    SENTENCE
                   </Button>
                 </div>
               </div>
@@ -350,20 +354,21 @@ export default function EditProductPage({
                       setFormData({ ...formData, category: e.target.value })
                     }
                   >
-
                     <option value="microcontroller">Microcontrollers</option>
-                  <option value="sensor">Sensors</option>
-                  <option value="power">Power & BMS</option>
-                  <option value="display">Display</option>
-                  <option value="pcb">Custom PCB</option>
-                  <option value="module">Modules</option>
-                  <option value="module">Motor and Motor Drivers</option>
-                  <option value="module">Relay and Switches</option>
-                  <option value="module">IC's</option>
-                  <option value="module">Printer</option>
-                  <option value="module">Wireless communication</option>
-                  <option value="kit">Kit</option>
-                  <option value="module">Others</option>
+                    <option value="sensor">Sensors</option>
+                    <option value="power">Power & BMS</option>
+                    <option value="display">Display</option>
+                    <option value="pcb">Custom PCB</option>
+                    <option value="module">Modules</option>
+                    <option value="motor">Motor and Motor Drivers</option>
+                    <option value="switch">Relay and Switches</option>
+                    <option value="ic">IC's</option>
+                    <option value="Printer">Printer</option>
+                    <option value="communication">
+                      Wireless communication
+                    </option>
+                    <option value="kit">Kit</option>
+                    <option value="others">Others</option>
                   </select>
                 </div>
 
@@ -377,7 +382,10 @@ export default function EditProductPage({
                     className="w-5 h-5 accent-emerald-600 rounded-md cursor-pointer flex-shrink-0"
                   />
                   <div className="flex flex-col select-none">
-                    <Label htmlFor="is_featured" className="text-[10px] font-black uppercase text-emerald-900 cursor-pointer">
+                    <Label
+                      htmlFor="is_featured"
+                      className="text-[10px] font-black uppercase text-emerald-900 cursor-pointer"
+                    >
                       Feature Product
                     </Label>
                     <span className="text-[9px] font-medium text-emerald-600/60 uppercase">
@@ -469,7 +477,8 @@ export default function EditProductPage({
                 />
 
                 <p className="mt-4 text-[10px] text-slate-400 leading-tight">
-                  * The first element serves as the primary storefront image card cover design asset. Max 3 images total.
+                  * The first element serves as the primary storefront image
+                  card cover design asset. Max 3 images total.
                 </p>
               </div>
             </div>

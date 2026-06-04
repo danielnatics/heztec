@@ -24,7 +24,7 @@ export default async function AdminLayout({
 
   // 3. Reject emails that don't match your master email threshold
   if (user.email !== ALLOWED_ADMIN_EMAIL) {
-    redirect("/login?redirect=/admin");
+    redirect("/");
   }
 
   // 4. If clean, pass children elements safely forward into your structural layout shell

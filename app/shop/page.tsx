@@ -3,7 +3,6 @@ import { createClient } from "@/lib/supabase/server";
 import Image from "next/image";
 import Link from "next/link";
 import ProductCard from "@/components/shop/ProductCard";
-import SearchBar from "@/components/shop/SearchBar"; // Imported the new reusable component
 import { ArrowRight, Package } from "lucide-react";
 
 export default async function MarketplaceLanding() {
@@ -49,8 +48,8 @@ export default async function MarketplaceLanding() {
           }}
         />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 py-8 md:py-14">
-          {/* Headline */}
+        {/* <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 py-8 md:py-14">
+         
           <h1 className="fade-up d2 text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 tracking-tight leading-tight max-w-2xl">
             Browse Our <span className="text-green-600">Products.</span>
           </h1>
@@ -59,11 +58,8 @@ export default async function MarketplaceLanding() {
             Microcontrollers, sensors, modules, and power components — sourced
             and ready to ship.
           </p>
-
-          {/* Reusable Search Bar Injection */}
-          <SearchBar />
           
-        </div>
+        </div> */}
       </section>
 
       {/* ── FEATURED PRODUCTS ────────────────────────────────── */}
@@ -72,11 +68,12 @@ export default async function MarketplaceLanding() {
           {/* Section header */}
           <div className="flex items-end justify-between">
             <div>
-              <p className="text-xs font-bold tracking-[0.22em] uppercase text-green-600 mb-3 flex items-center gap-2">
+              <p className="text-lg font-bold tracking-[0.22em] uppercase text-green-600 mb-3 flex items-center gap-2">
                 <span className="w-5 h-[2px] bg-green-600 inline-block" />{" "}
                 Featured Products
               </p>
             </div>
+            
             <Link
               href="/shop/all"
               className="hidden md:inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-green-700 transition-colors group"
@@ -86,6 +83,16 @@ export default async function MarketplaceLanding() {
                 size={14}
                 className="group-hover:translate-x-1 transition-transform"
               />
+            </Link>
+          </div>
+                    {/* Mobile view all */}
+          <div className="md:hidden text-end">
+            <Link
+              href="/shop/all"
+              className="inline-flex items-center gap-2 font-normal text-sm"
+              // style={{ background: "#16a34a" }}
+            >
+              View Full Catalog <ArrowRight size={15} />
             </Link>
           </div>
 
@@ -112,16 +119,7 @@ export default async function MarketplaceLanding() {
             </div>
           )}
 
-          {/* Mobile view all */}
-          <div className="mt-10 md:hidden text-center">
-            <Link
-              href="/shop/all"
-              className="inline-flex items-center gap-2 px-7 py-3.5 font-bold text-sm text-white rounded-xl"
-              style={{ background: "#16a34a" }}
-            >
-              View Full Catalog <ArrowRight size={15} />
-            </Link>
-          </div>
+
         </div>
       </section>
     </div>

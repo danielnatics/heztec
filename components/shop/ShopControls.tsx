@@ -89,7 +89,7 @@ export default function ShopControls({
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-2">
         <div className="flex items-end justify-between">
           <h1 className="text-slate-900 font-normal text-2xl md:text-4xl tracking-tight">
-            Products
+            All Products
           </h1>
           <p className="text-xs text-slate-400 font-normal tracking-wider mt-1">
             {productCount}results
@@ -213,5 +213,5 @@ export default function ShopControls({
         </div>
       </div>
     </div>
-  );
+  ); 
 }

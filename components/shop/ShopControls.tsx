@@ -108,7 +108,7 @@ export default function ShopControls({
               }}
               onFocus={() => setIsSuggestionsOpen(true)}
               placeholder="Search components"
-              className="w-full h-12 pl-11 pr-10 rounded-xl border border-slate-200 text-sm font-medium outline-none focus:border-green-500 bg-slate-50/50 transition-all"
+              className="sticky top-4 z-[50] bg-white/80 w-full h-12 pl-11 pr-10 rounded-xl border border-slate-200 text-sm font-medium outline-none focus:border-green-500 bg-slate-50/50 transition-all"
             />
             {searchQuery && (
               <button

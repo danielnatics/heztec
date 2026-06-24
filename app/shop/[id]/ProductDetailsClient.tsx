@@ -162,15 +162,28 @@ export default function ProductDetailsClient({
           <h2 className="text-2xl font-medium text-slate-900 mb-8 tracking-tight">Component Reviews</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div className="space-y-6">
-              {reviews.map((review: any) => (
-                <div key={review.id} className="pb-6 border-b border-slate-100">
-                  <div className="flex items-center gap-1 mb-2">
-                    {[1, 2, 3, 4, 5].map((s) => <Star key={s} size={14} className={s <= review.rating ? "fill-yellow-400 text-yellow-400" : "text-slate-200"} />)}
+              {reviews.map((review: any) => {
+                const displayName = review.user_name || "User";
+                const initial = displayName.charAt(0).toUpperCase();
+
+                return (
+                  <div key={review.id} className="pb-8 border-b border-slate-100 flex gap-4">
+                    <div className="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-lg border-2 border-white shadow-sm flex-shrink-0">
+                      {initial}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-1 mb-1">
+                        {[1, 2, 3, 4, 5].map((s) => <Star key={s} size={14} className={s <= review.rating ? "fill-yellow-400 text-yellow-400" : "text-slate-200"} />)}
+                      </div>
+                      <h4 className="font-bold text-slate-900 text-sm">{displayName}</h4>
+                      <p className="text-sm text-slate-600 font-medium my-2 leading-relaxed">{review.comment}</p>
+                      <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                        {new Date(review.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-sm text-slate-700 font-medium mb-2">{review.comment}</p>
-                  <p className="text-[10px] uppercase font-bold text-slate-400">{review.user_email.split('@')[0]}</p>
-                </div>
-              ))}
+                );
+              })}
             </div>
             <div className="md:sticky md:top-28 h-fit">
               {hasPurchased ? (

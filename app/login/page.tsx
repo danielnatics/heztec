@@ -253,7 +253,7 @@ function LoginFormInner() {
           </form>
 
           {/* OAUTH DIVIDER */}
-          <div className="relative my-6">
+          {/* <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t border-slate-200" />
             </div>
@@ -261,9 +261,9 @@ function LoginFormInner() {
               <span className="bg-white px-3 text-slate-400">Or continue with</span>
             </div>
           </div>
-
+ */}
           {/* GOOGLE SIGN IN BUTTON */}
-          <Button
+          {/* <Button
             type="button"
             variant="outline"
             disabled={loading || googleLoading}
@@ -295,7 +295,7 @@ function LoginFormInner() {
                 <span>Google</span>
               </>
             )}
-          </Button>
+          </Button> */}
 
           {/* DYNAMIC MODE TOGGLE ACCORDION FOOTER CONTAINER */}
           <div className="text-center pt-2">

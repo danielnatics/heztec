@@ -9,7 +9,7 @@ import { toast } from "sonner";
 interface ReviewFormProps {
   productId: string;
   userEmail: string | null;
-  purchasedOrderId: string | null; // Added this prop
+  purchasedOrderId: string | null;
 }
 
 export default function ProductReviewForm({ productId, userEmail, purchasedOrderId }: ReviewFormProps) {
@@ -29,10 +29,15 @@ export default function ProductReviewForm({ productId, userEmail, purchasedOrder
 
     setLoading(true);
     try {
+      // Fetch the user's name from Auth metadata
+      const { data: { user } } = await supabase.auth.getUser();
+      const fullName = user?.user_metadata?.full_name || "User";
+
       const { error } = await supabase.from("product_reviews").insert({
         product_id: productId,
         user_email: userEmail,
-        order_id: purchasedOrderId, // Now correctly linked to the specific order
+        user_name: fullName, // Save the name here
+        order_id: purchasedOrderId,
         rating,
         comment: comment.trim(),
       });

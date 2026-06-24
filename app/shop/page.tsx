@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import Image from "next/image";
 import Link from "next/link";
 import ProductCard from "@/components/shop/ProductCard";
+import SearchBar from "@/components/shop/SearchBar"; // Imported the new reusable component
 import { ArrowRight, Package } from "lucide-react";
 
 export default async function MarketplaceLanding() {
@@ -48,16 +49,20 @@ export default async function MarketplaceLanding() {
           }}
         />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 py-5 md:py-10">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 py-8 md:py-14">
           {/* Headline */}
           <h1 className="fade-up d2 text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 tracking-tight leading-tight max-w-2xl">
             Browse Our <span className="text-green-600">Products.</span>
           </h1>
 
-          <p className="text-base text-slate-500 leading-relaxed max-w-md mt-2">
+          <p className="text-base text-slate-500 leading-relaxed max-w-md mt-3 mb-8">
             Microcontrollers, sensors, modules, and power components — sourced
             and ready to ship.
           </p>
+
+          {/* Reusable Search Bar Injection */}
+          <SearchBar />
+          
         </div>
       </section>
 

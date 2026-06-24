@@ -14,6 +14,7 @@ import {
   Edit2,
   Save,
   Trash2,
+  Star,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -82,11 +83,10 @@ export default function AdminOrdersPage() {
     }
   };
 
-  // Add this new function to handle completing the order AND sending the email
   const completeOrderAndSendReceipt = async (order: Order) => {
     setUpdatingId(order.id);
     try {
-      // 1. Update database status to "completed"
+      // 1. Update database status to "completed" (Shipped)
       const { error } = await supabase
         .from("orders")
         .update({ payment_status: "completed" })
@@ -94,7 +94,7 @@ export default function AdminOrdersPage() {
 
       if (error) throw error;
 
-      // 2. Call the server API to send the email
+      // 2. Call the server API to send the receipt email
       const response = await fetch("/api/send-receipt", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -107,7 +107,6 @@ export default function AdminOrdersPage() {
 
       toast.success("Order completed! Receipt sent to customer's email.");
 
-      // Update local state so the UI reflects the change
       setOrders(
         orders.map((o) =>
           o.id === order.id ? { ...o, payment_status: "completed" } : o,
@@ -115,6 +114,35 @@ export default function AdminOrdersPage() {
       );
     } catch (error: any) {
       toast.error("Error finalizing order: " + error.message);
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  // --- NEW: Handle marking as physically delivered and requesting a review ---
+  const markDeliveredAndRequestReview = async (order: Order) => {
+    setUpdatingId(order.id);
+    try {
+      // Calls the API route we created in the previous step
+      const response = await fetch("/api/admin/orders/deliver", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId: order.id }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) throw new Error(result.error);
+
+      toast.success("Order delivered & review request emailed!");
+
+      setOrders(
+        orders.map((o) =>
+          o.id === order.id ? { ...o, payment_status: "delivered" } : o,
+        ),
+      );
+    } catch (error: any) {
+      toast.error("Error: " + error.message);
     } finally {
       setUpdatingId(null);
     }
@@ -192,7 +220,13 @@ export default function AdminOrdersPage() {
     if (status === "completed")
       return (
         <span className="px-2 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-black uppercase rounded-md border border-emerald-200">
-          <Send size={12} className="inline mr-1" /> Completed
+          <Send size={12} className="inline mr-1" /> Shipped/Completed
+        </span>
+      );
+    if (status === "delivered")
+      return (
+        <span className="px-2 py-1 bg-purple-50 text-purple-700 text-[10px] font-black uppercase rounded-md border border-purple-200">
+          <Star size={12} className="inline mr-1 fill-purple-700" /> Delivered
         </span>
       );
     if (status === "cancelled")
@@ -364,7 +398,7 @@ export default function AdminOrdersPage() {
                 </div>
 
                 <div className="flex gap-2">
-                  {/* Status Change Buttons */}
+                  {/* Confirm Payment Button */}
                   {order.payment_status === "pending_verification" && (
                     <button
                       onClick={() => updateOrderStatus(order.id, "confirmed")}
@@ -380,11 +414,7 @@ export default function AdminOrdersPage() {
                     </button>
                   )}
 
-                  {/* {order.payment_status === "confirmed" && (
-                    <button onClick={() => updateOrderStatus(order.id, "completed")} disabled={updatingId === order.id} className="flex-1 bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-2.5 rounded-lg flex justify-center items-center gap-2">
-                      {updatingId === order.id ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />} Complete Order
-                    </button>
-                  )} */}
+                  {/* Send Receipt / Mark Completed Button */}
                   {order.payment_status === "confirmed" && (
                     <button
                       onClick={() => completeOrderAndSendReceipt(order)}
@@ -397,6 +427,22 @@ export default function AdminOrdersPage() {
                         <Send size={14} />
                       )}
                       Complete & Email Receipt
+                    </button>
+                  )}
+
+                  {/* NEW: Mark Delivered & Request Review Button */}
+                  {order.payment_status === "completed" && (
+                    <button
+                      onClick={() => markDeliveredAndRequestReview(order)}
+                      disabled={updatingId === order.id}
+                      className="flex-1 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold py-2.5 rounded-lg flex justify-center items-center gap-2 transition-colors"
+                    >
+                      {updatingId === order.id ? (
+                        <Loader2 size={14} className="animate-spin" />
+                      ) : (
+                        <Star size={14} />
+                      )}
+                      Mark Delivered & Request Review
                     </button>
                   )}
 

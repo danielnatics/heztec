@@ -12,18 +12,25 @@ import {
   ChevronDown,
   ChevronLeft,
   Package,
+  Star,
+  Lock,
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 
 import ProductCard from "@/components/shop/ProductCard";
+import ProductReviewForm from "@/components/shop/ProductReviewForm";
 
 export default function ProductDetailsClient({
   product,
   recommendations,
+  reviews,
+  hasPurchased,
+  userEmail,
 }: any) {
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
   const [isNameExpanded, setIsNameExpanded] = useState(false);
+  
   // Track images via array index instead of string URLs for easier sliding
   const [currentIndex, setCurrentIndex] = useState(0);
   const images =
@@ -211,7 +218,6 @@ export default function ProductDetailsClient({
                 {/* Product Description, Features & Specs */}
                 <div className="space-y-6 pt-4 md:pt-0">
                   <h2 className="text-xl font-medium text-slate-900 tracking-tight flex items-center gap-2">
-                    {/* <div className="w-1 h-8 bg-emerald-500 rounded-full" /> */}
                     Features
                   </h2>
                   <p className="text-slate-700 text-[14px] leading-relaxed whitespace-pre-wrap font-medium">
@@ -250,9 +256,60 @@ export default function ProductDetailsClient({
           </div>
         </div>
 
+        {/* --- CUSTOMER REVIEWS --- */}
+      {reviews.length > 0 &&  <section className="mt-16 md:mt-32 pt-16 border-t border-slate-100 px-3 lg:px-0">
+          <h2 className="text-2xl font-medium text-slate-900 mb-8 tracking-tight">
+            Component Reviews
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            {/* LEFT SIDE: Displaying Existing Reviews */}
+            <div className="space-y-6">
+              {reviews && reviews.length > 0 ? (
+                reviews.map((review: any) => (
+                  <div key={review.id} className="pb-6 border-b border-slate-100 last:border-0">
+                    <div className="flex items-center gap-1 mb-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star
+                          key={star}
+                          size={14}
+                          className={star <= review.rating ? "fill-yellow-400 text-yellow-400" : "text-slate-200"}
+                        />
+                      ))}
+                    </div>
+                    <p className="text-sm text-slate-700 font-medium mb-2">{review.comment}</p>
+                    <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                      {review.user_email.split('@')[0]} • {new Date(review.created_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-slate-500 italic">No reviews yet. Be the first to test this component!</p>
+              )}
+            </div>
+
+            {/* RIGHT SIDE: The Submission Form OR The Locked State */}
+            <div className="md:sticky md:top-28 h-fit">
+              {hasPurchased ? (
+                <ProductReviewForm productId={product.id} userEmail={userEmail} />
+              ) : (
+                <div className="bg-slate-50/50 border border-slate-200 p-8 rounded-3xl text-center space-y-4 shadow-sm">
+                  <div className="w-14 h-14 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-slate-400">
+                    <Lock size={24} />
+                  </div>
+                  <h3 className="font-bold text-slate-900 tracking-tight text-sm">Verified Buyers Only</h3>
+                  <p className="text-sm text-slate-500 leading-relaxed max-w-[250px] mx-auto">
+                    You must purchase this component before leaving a review. This ensures all feedback on the HezTec marketplace remains authentic.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>}
+
         {/* --- RECOMMENDATIONS (YOU MAY ALSO LIKE) --- */}
         {recommendations && recommendations.length > 0 && (
-          <section className="mt-10 md:mt-48 pt-20 border-t border-slate-100">
+          <section className="mt-16 md:mt-24 pt-16 border-t border-slate-100">
             <div className="flex items-end justify-between mb-12 px-2">
               <div className="space-y-2">
                 <h2 className="text-2xl font-medium text-slate-900 tracking-tighter">

@@ -30,7 +30,9 @@ export default async function AdminDashboard() {
     orders
       ?.filter(
         (o) =>
-          o.payment_status === "completed" || o.payment_status === "confirmed",
+          o.payment_status === "completed" ||
+          o.payment_status === "confirmed" ||
+          o.payment_status === "delivered",
       )
       .reduce((sum, order) => sum + (Number(order.total_amount) || 0), 0) || 0;
 

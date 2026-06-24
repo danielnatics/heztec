@@ -133,7 +133,7 @@ export default function CheckoutPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           
           <div className="lg:col-span-7 space-y-6">
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight uppercase">Checkout Desk</h1>
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight uppercase">Checkout</h1>
             
             <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
               <div className="mb-6 space-y-2">
@@ -152,7 +152,7 @@ export default function CheckoutPage() {
                     <Input 
                       id="name" 
                       required
-                      placeholder="e.g., John Doe" 
+                      placeholder="name" 
                       value={customerName}
                       onChange={(e) => setCustomerName(e.target.value)}
                       className="pl-10 h-12 bg-slate-50/50 border-slate-200 rounded-xl font-medium focus-visible:ring-green-600"
@@ -168,7 +168,7 @@ export default function CheckoutPage() {
                     id="address" 
                     required 
                     rows={3}
-                    placeholder="Enter your comprehensive delivery coordinates or institutional lab center location..." 
+                    placeholder="Enter your location..." 
                     value={deliveryAddress}
                     onChange={(e) => setDeliveryAddress(e.target.value)}
                     className="bg-slate-50/50 border-slate-200 rounded-xl text-sm font-medium focus-visible:ring-green-600 leading-relaxed"

@@ -257,7 +257,7 @@ export default function ProductDetailsClient({
         </div>
 
         {/* --- CUSTOMER REVIEWS --- */}
-      {reviews.length > 0 &&  <section className="mt-16 md:mt-32 pt-16 border-t border-slate-100 px-3 lg:px-0">
+      {<section className="mt-16 md:mt-32 pt-16 border-t border-slate-100 px-3 lg:px-0">
           <h2 className="text-2xl font-medium text-slate-900 mb-8 tracking-tight">
             Component Reviews
           </h2>

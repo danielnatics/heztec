@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import ProductDetailsClient from "./ProductDetailsClient";
 
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
-  // 1. Properly unwrap the asynchronous params for Next.js 15
   const { id } = await params;
   const supabase = await createClient();
 
@@ -18,7 +17,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     return notFound();
   }
 
-  // 3. Fetch "You May Also Like" (Same category, excluding current item)
+  // 3. Fetch "You May Also Like"
   const { data: recommendations } = await supabase
     .from("products")
     .select("*")
@@ -26,7 +25,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     .neq("id", id)
     .limit(10);
 
-  // 4. Fetch Approved Reviews for this product
+  // 4. Fetch Approved Reviews
   const { data: reviews } = await supabase
     .from("product_reviews")
     .select("*")
@@ -34,25 +33,36 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     .eq("is_approved", true)
     .order("created_at", { ascending: false });
 
-  // 5. Security Check: Is the user logged in and did they buy this item?
+  // 5. Security Check: Can the user review this?
   const { data: { user } } = await supabase.auth.getUser();
-  let hasPurchased = false;
+  
+  let canReview = false;
+  let purchasedOrderId = null;
 
   if (user) {
-    // FIX 1: Select payment_status from the database
-    const { data: userOrders } = await supabase
-      .from("orders")
-      .select("items, payment_status") 
-      .eq("user_email", user.email);
+    // Fetch orders AND existing reviews to prevent duplicates
+    const [ordersRes, reviewsRes] = await Promise.all([
+      supabase.from("orders").select("id, items, payment_status").eq("user_email", user.email),
+      supabase.from("product_reviews").select("order_id, product_id").eq("user_email", user.email)
+    ]);
 
-    if (userOrders) {
-      hasPurchased = userOrders.some((order) => {
-        // FIX 2: Check the payment_status column for "completed" or "delivered"
-        const isCompleted = order.payment_status === "completed" || order.payment_status === "delivered";
-        const containsProduct = order.items?.some((item: any) => item.id === product.id);
+    if (ordersRes.data) {
+      const qualifyingOrder = ordersRes.data.find((order) => {
+        const isDelivered = order.payment_status === "delivered";
+        const hasProduct = order.items?.some((item: any) => item.id === product.id);
         
-        return isCompleted && containsProduct;
+        // Check if this specific order/product combo has already been reviewed
+        const alreadyReviewed = reviewsRes.data?.some(
+          (r) => r.order_id === order.id && r.product_id === product.id
+        );
+
+        return isDelivered && hasProduct && !alreadyReviewed;
       });
+
+      if (qualifyingOrder) {
+        canReview = true;
+        purchasedOrderId = qualifyingOrder.id;
+      }
     }
   }
 
@@ -61,7 +71,8 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
       product={product} 
       recommendations={recommendations || []}
       reviews={reviews || []}
-      hasPurchased={hasPurchased}
+      hasPurchased={canReview} // Renamed logic to reflect ability to review
+      purchasedOrderId={purchasedOrderId} // Pass this down!
       userEmail={user?.email || null}
     />
   );

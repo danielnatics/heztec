@@ -9,9 +9,10 @@ import { toast } from "sonner";
 interface ReviewFormProps {
   productId: string;
   userEmail: string | null;
+  purchasedOrderId: string | null; // Added this prop
 }
 
-export default function ProductReviewForm({ productId, userEmail }: ReviewFormProps) {
+export default function ProductReviewForm({ productId, userEmail, purchasedOrderId }: ReviewFormProps) {
   const supabase = createClient();
   const [rating, setRating] = useState(0);
   const [hoveredStar, setHoveredStar] = useState(0);
@@ -24,12 +25,14 @@ export default function ProductReviewForm({ productId, userEmail }: ReviewFormPr
     if (!userEmail) return toast.error("Please sign in to leave a review.");
     if (rating === 0) return toast.error("Please select a star rating.");
     if (!comment.trim()) return toast.error("Please write a review.");
+    if (!purchasedOrderId) return toast.error("No valid order found for this review.");
 
     setLoading(true);
     try {
       const { error } = await supabase.from("product_reviews").insert({
         product_id: productId,
         user_email: userEmail,
+        order_id: purchasedOrderId, // Now correctly linked to the specific order
         rating,
         comment: comment.trim(),
       });
@@ -82,8 +85,8 @@ export default function ProductReviewForm({ productId, userEmail }: ReviewFormPr
               size={24}
               className={`transition-colors ${
                 star <= (hoveredStar || rating)
-                  ? "fill-yellow-400 text-yellow-400" // Filled yellow if hovered or selected
-                  : "text-slate-300" // Empty gray otherwise
+                  ? "fill-yellow-400 text-yellow-400"
+                  : "text-slate-300"
               }`}
             />
           </button>
